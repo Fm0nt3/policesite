@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accesso Polizia - Cena con Delitto</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #0c0c0c;
+            color: #f0f0f0;
+            line-height: 1.6;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%230c0c0c"/><path d="M0 0L100 100" stroke="%23222" stroke-width="1"/><path d="M100 0L0 100" stroke="%23222" stroke-width="1"/></svg>');
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #333;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            color: #d32f2f;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            color: #e0e0e0;
+            margin-bottom: 20px;
+        }
+        
+        h3 {
+            color: #d32f2f;
+            margin: 20px 0 10px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+        
+        .login-container {
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            padding: 30px;
+            max-width: 500px;
+            margin: 50px auto;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #e0e0e0;
+        }
+        
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #2c2c2c;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #f0f0f0;
+            font-size: 16px;
+        }
+        
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #d32f2f;
+        }
+        
+        button {
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #b71c1c;
+        }
+        
+        .error-message {
+            color: #f44336;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        }
+        
+        .main-content {
+            display: none;
+        }
+        
+        .search-system {
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .search-box {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .search-box input {
+            flex-grow: 1;
+            padding: 10px;
+            background-color: #2c2c2c;
+            border: 1px solid #444;
+            border-radius: 4px 0 0 4px;
+            color: #f0f0f0;
+        }
+        
+        .search-box button {
+            width: auto;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .search-results {
+            background-color: #2c2c2c;
+            border-radius: 4px;
+            padding: 20px;
+            min-height: 200px;
+        }
+        
+        .report-section {
+            background-color: #1a1a1a;
+            border-left: 4px solid #d32f2f;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .evidence-list {
+            list-style-type: none;
+            margin: 10px 0;
+        }
+        
+        .evidence-list li {
+            padding: 5px 0;
+            border-bottom: 1px dashed #444;
+        }
+        
+        .highlight {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid #333;
+            margin-top: 30px;
+            color: #888;
+        }
+        
+        .police-badge {
+            display: inline-block;
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            border: 2px solid #d32f2f;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 12px;
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        
+        .timestamp {
+            color: #888;
+            font-style: italic;
+            font-size: 0.9em;
+            text-align: right;
+            display: block;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="police-badge">POLIZIA</div>
+            <h1>INVESTIGAZIONE CRIMINE</h1>
+            <h2>Cena con Delitto - Accesso Riservato</h2>
+        </header>
+
+        <div id="loginPage">
+            <div class="login-container">
+                <h2>Accesso Agenti</h2>
+                <div class="form-group">
+                    <label for="username">Nome Utente</label>
+                    <input type="text" id="username" placeholder="Inserisci il nome utente">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Inserisci la password">
+                </div>
+                <button id="loginBtn">ACCEDI AL SISTEMA</button>
+                <div id="errorMsg" class="error-message">Credenziali non valide. Riprovare.</div>
+            </div>
+        </div>
+
+        <div id="mainPage" class="main-content">
+            <div class="search-system">
+                <h2>Sistema di Ricerca Dati</h2>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Inserisci termine di ricerca...">
+                    <button id="searchBtn">CERCA</button>
+                </div>
+                <div class="search-results">
+                    <p>Inserire un termine di ricerca per investigare sul caso.</p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Sistema riservato di investigazione - Divulgazione vietata</p>
+            <p>© 2023 Investigazioni Poliziesche</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginBtn = document.getElementById('loginBtn');
+            const errorMsg = document.getElementById('errorMsg');
+            const loginPage = document.getElementById('loginPage');
+            const mainPage = document.getElementById('mainPage');
+            const searchBtn = document.getElementById('searchBtn');
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.querySelector('.search-results');
+            
+            // Funzione di login
+            loginBtn.addEventListener('click', function() {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                if (username === 'Ines Cabral' && password === 'santiago2021') {
+                    // Accesso consentito
+                    loginPage.style.display = 'none';
+                    mainPage.style.display = 'block';
+                } else {
+                    // Accesso negato
+                    errorMsg.style.display = 'block';
+                    document.getElementById('password').value = '';
+                    
+                    // Shake animation per indicare errore
+                    loginPage.style.animation = 'shake 0.5s';
+                    setTimeout(() => {
+                        loginPage.style.animation = '';
+                    }, 500);
+                }
+            });
+            
+            // Permetti l'accesso anche premendo Invio
+            document.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    if (loginPage.style.display !== 'none') {
+                        loginBtn.click();
+                    } else {
+                        searchBtn.click();
+                    }
+                }
+            });
+            
+            // Sistema di ricerca
+            searchBtn.addEventListener('click', function() {
+                const searchTerm = searchInput.value.trim().toLowerCase();
+                
+                if (searchTerm === 'monastero') {
+                    searchResults.innerHTML = `
+                        <h2>Risultati della ricerca: "monastero"</h2>
+                        
+                        <div class="report-section">
+                            <h3>REPORT POLIZIA - CASO: Omicidio Monastero</h3>
+                            <p><span class="highlight">Data:</span> 30 ottobre 2023</p>
+                            <p><span class="highlight">Luogo:</span> Monastero di San Benedetto, Camera 7</p>
+                            <p><span class="highlight">Vittima:</span> Frate Lorenzo Bellini, 54 anni</p>
+                            <p><span class="highlight">Trovato da:</span> Novizio Marco, alle ore 6:30 del mattino</p>
+                        </div>
+                        
+                        <h3>Dettagli dell'Accaduto</h3>
+                        <p>Frate Lorenzo è stato trovato senza vita nella sua cella al monastero. La vittima presentava segni di lotta e un colpo profondo alla tempia. L'arma del delitto, un candeliere di ottone, è stata trovata accanto al corpo con tracce di sangue.</p>
+                        
+                        <h3>Prove Trovate sulla Scena</h3>
+                        <ul class="evidence-list">
+                            <li><span class="highlight">Impronte digitali:</span> Multiple sulla maniglia della porta e sul candeliere</li>
+                            <li><span class="highlight">Fibre tessili:</span> Fibra di lana nera trovata sulla mano della vittima</li>
+                            <li><span class="highlight">Documento strappato:</span> Frammento di una lettera con la scritta "...non perdonerò mai..."</li>
+                            <li><span class="highlight">Orario dell'omicidio:</span> Stimato tra le 23:00 del 29 ottobre e l'1:00 del 30 ottobre</li>
+                        </ul>
+                        
+                        <h3>Sospetti</h3>
+                        <p>Tre persone erano presenti nel monastero la notte dell'omicidio:</p>
+                        <ul class="evidence-list">
+                            <li><span class="highlight">Fate Gregorio:</span> Confratello che aveva recentemente litigato con la vittima per questioni amministrative</li>
+                            <li><span class="highlight">Novizio Marco:</span> Scopritore del corpo, in attesa di prendere i voti</li>
+                            <li><span class="highlight">Signora Rosalia:</span> Cuoca del monastero, presente quella notte per preparazioni culinarie</li>
+                        </ul>
+                        
+                        <h3>Moventi Possibili</h3>
+                        <p>Dalle prime investigazioni emergono diversi moventi:</p>
+                        <ul class="evidence-list">
+                            <li>Frate Gregorio e la vittima avevano discusso animatamente il giorno prima per la gestione delle offerte</li>
+                            <li>Il novizio Marco era stato rimproverato pubblicamente da Frate Lorenzo per aver rotto un vaso antico</li>
+                            <li>La signora Rosalia potrebbe aver sottratto denaro dalla cassetta delle offerte, come suggerito da un biglietto anonimo trovato nella cella della vittima</li>
+                        </ul>
+                        
+                        <div class="report-section">
+                            <h3>NOTE INVESTIGATIVE</h3>
+                            <p>La vittima teneva un diario personale, attualmente mancante. L'ultima entry registrata è del 28 ottobre e parlava di "scoperte sconvolgenti" che avrebbero cambiato il monastero per sempre.</p>
+                            <p>La finestra della cella era chiusa dall'interno, suggerendo che l'assassino sia entrato dalla porta o fosse già all'interno.</p>
+                        </div>
+                        
+                        <span class="timestamp">Ultimo aggiornamento: 31 ottobre 2023, ore 14:23</span>
+                    `;
+                } else if (searchTerm !== '') {
+                    searchResults.innerHTML = `
+                        <h2>Risultati della ricerca: "${searchTerm}"</h2>
+                        <p>Nessun risultato trovato per il termine specificato.</p>
+                        <p>Si prega di verificare il termine di ricerca o contattare l'archivio centrale per maggiori informazioni.</p>
+                    `;
+                } else {
+                    searchResults.innerHTML = `<p>Inserire un termine di ricerca per investigare sul caso.</p>`;
+                }
+            });
+            
+            // Aggiungi stili per l'animazione shake
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes shake {
+                    0% { transform: translateX(0); }
+                    20% { transform: translateX(-10px); }
+                    40% { transform: translateX(10px); }
+                    60% { transform: translateX(-10px); }
+                    80% { transform: translateX(10px); }
+                    100% { transform: translateX(0); }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>
