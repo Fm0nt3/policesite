@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accesso Polizia - Cena con Delitto</title>
+    <title>Accesso Polizia</title>
     <style>
         * {
             box-sizing: border-box;
@@ -209,9 +209,9 @@
 <body>
     <div class="container">
         <header>
-            <div class="police-badge">POLIZIA</div>
+            <div class="police-badge">POLICE</div>
             <h1>INVESTIGAZIONE CRIMINE</h1>
-            <h2>Cena con Delitto - Accesso Riservato</h2>
+            <h2>Accesso Riservato</h2>
         </header>
 
         <div id="loginPage">
@@ -238,14 +238,14 @@
                     <button id="searchBtn">CERCA</button>
                 </div>
                 <div class="search-results">
-                    <p>Inserire un termine di ricerca per investigare sul caso.</p>
+                    <p>Inserire un termine di ricerca per cercare informazioni sul database.</p>
                 </div>
             </div>
         </div>
 
         <footer>
             <p>Sistema riservato di investigazione - Divulgazione vietata</p>
-            <p>© 2023 Investigazioni Poliziesche</p>
+            <p>© 2025 Polizia Scientifica</p>
         </footer>
     </div>
 
@@ -310,6 +310,53 @@
                         
                         <h3>Dettagli dell'Accaduto</h3>
                         <p>Frate Lorenzo è stato trovato senza vita nella sua cella al monastero. La vittima presentava segni di lotta e un colpo profondo alla tempia. L'arma del delitto, un candeliere di ottone, è stata trovata accanto al corpo con tracce di sangue.</p>
+                        
+                        <h3>Prove Trovate sulla Scena</h3>
+                        <ul class="evidence-list">
+                            <li><span class="highlight">Impronte digitali:</span> Multiple sulla maniglia della porta e sul candeliere</li>
+                            <li><span class="highlight">Fibre tessili:</span> Fibra di lana nera trovata sulla mano della vittima</li>
+                            <li><span class="highlight">Documento strappato:</span> Frammento di una lettera con la scritta "...non perdonerò mai..."</li>
+                            <li><span class="highlight">Orario dell'omicidio:</span> Stimato tra le 23:00 del 29 ottobre e l'1:00 del 30 ottobre</li>
+                        </ul>
+                        
+                        <h3>Sospetti</h3>
+                        <p>Tre persone erano presenti nel monastero la notte dell'omicidio:</p>
+                        <ul class="evidence-list">
+                            <li><span class="highlight">Fate Gregorio:</span> Confratello che aveva recentemente litigato con la vittima per questioni amministrative</li>
+                            <li><span class="highlight">Novizio Marco:</span> Scopritore del corpo, in attesa di prendere i voti</li>
+                            <li><span class="highlight">Signora Rosalia:</span> Cuoca del monastero, presente quella notte per preparazioni culinarie</li>
+                        </ul>
+                        
+                        <h3>Moventi Possibili</h3>
+                        <p>Dalle prime investigazioni emergono diversi moventi:</p>
+                        <ul class="evidence-list">
+                            <li>Frate Gregorio e la vittima avevano discusso animatamente il giorno prima per la gestione delle offerte</li>
+                            <li>Il novizio Marco era stato rimproverato pubblicamente da Frate Lorenzo per aver rotto un vaso antico</li>
+                            <li>La signora Rosalia potrebbe aver sottratto denaro dalla cassetta delle offerte, come suggerito da un biglietto anonimo trovato nella cella della vittima</li>
+                        </ul>
+                        
+                        <div class="report-section">
+                            <h3>NOTE INVESTIGATIVE</h3>
+                            <p>La vittima teneva un diario personale, attualmente mancante. L'ultima entry registrata è del 28 ottobre e parlava di "scoperte sconvolgenti" che avrebbero cambiato il monastero per sempre.</p>
+                            <p>La finestra della cella era chiusa dall'interno, suggerendo che l'assassino sia entrato dalla porta o fosse già all'interno.</p>
+                        </div>
+                        
+                        <span class="timestamp">Ultimo aggiornamento: 31 ottobre 2023, ore 14:23</span>
+                    `;
+                } else if (searchTerm === 'rozenheim') {
+                    searchResults.innerHTML = `
+                        <h2>Risultati della ricerca: "rozenheim"</h2>
+                        
+                        <div class="report-section">
+                            <h3>REPORT POLIZIA - CASO: Omicidio in Villa Rozenheim</h3>
+                            <p><span class="highlight">Data:</span> 31 ottobre 2024</p>
+                            <p><span class="highlight">Luogo:</span> , Studio privato</p>
+                            <p><span class="highlight">Vittima:</span> Dottor Viktor Rozenheim, 61 anni</p>
+                            <p><span class="highlight">Trovato da:</span> Katarina Viktoria Kinder, alle ore 21:43</p>
+                        </div>
+                        
+                        <h3>Dettagli dell'Accaduto</h3>
+                        <p>Il Sig. Viktor Rozenheim è stato trovato senza vita nel suo studio privato steso per terra. La vittima non presentava segni di lotta visibili. L'arma del delitto, un lama affilata, è stata trovata ancora salda al petto del dottore.</p>
                         
                         <h3>Prove Trovate sulla Scena</h3>
                         <ul class="evidence-list">
