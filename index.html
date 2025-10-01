@@ -238,7 +238,7 @@
                     <button id="searchBtn">CERCA</button>
                 </div>
                 <div class="search-results">
-                    <p>Inserire un termine di ricerca per cercare informazioni sul database.</p>
+                    <p>Inserire un termine di ricerca (in minuscolo) per cercare informazioni sul database.</p>
                 </div>
             </div>
         </div>
@@ -296,52 +296,34 @@
             searchBtn.addEventListener('click', function() {
                 const searchTerm = searchInput.value.trim().toLowerCase();
                 
-                if (searchTerm === 'monastero') {
+                if (searchTerm === 'alicia') {
                     searchResults.innerHTML = `
-                        <h2>Risultati della ricerca: "monastero"</h2>
+                        <h2>Risultati della ricerca: "alicia"</h2>
                         
                         <div class="report-section">
-                            <h3>REPORT POLIZIA - CASO: Omicidio Monastero</h3>
-                            <p><span class="highlight">Data:</span> 30 ottobre 2023</p>
-                            <p><span class="highlight">Luogo:</span> Monastero di San Benedetto, Camera 7</p>
-                            <p><span class="highlight">Vittima:</span> Frate Lorenzo Bellini, 54 anni</p>
-                            <p><span class="highlight">Trovato da:</span> Novizio Marco, alle ore 6:30 del mattino</p>
+                            <h3>REPORT POLIZIA - CASO: Sospetto suicidio Alicia *****</h3>
+                            <p><span class="highlight">Data:</span> 21 aprile 2012</p>
+                            <p><span class="highlight">Luogo:</span> Edificio abbandonato di proprietà Alvarez, vicino al monastero *****</p>
+                            <p><span class="highlight">Vittima:</span> Alicia *****, 20 anni</p>
+                            <p><span class="highlight">Trovato da:</span> Davide *****, alle ore 23:35</p>
                         </div>
                         
                         <h3>Dettagli dell'Accaduto</h3>
-                        <p>Frate Lorenzo è stato trovato senza vita nella sua cella al monastero. La vittima presentava segni di lotta e un colpo profondo alla tempia. L'arma del delitto, un candeliere di ottone, è stata trovata accanto al corpo con tracce di sangue.</p>
+                        <p>Alicia ***** è stato trovata senza vita all'interno della casa abbandonato di proprietà Alvarez vicino alla rampa di scale che portava al piano superiore. La vittima presentava segni evidenti dati da una caduta da un'altezza considerevole. Il caso è stato archiviato come suicidio perché non sono state trovate abbastanza prove per identificare un possibile omicida.</p>
                         
                         <h3>Prove Trovate sulla Scena</h3>
                         <ul class="evidence-list">
-                            <li><span class="highlight">Impronte digitali:</span> Multiple sulla maniglia della porta e sul candeliere</li>
-                            <li><span class="highlight">Fibre tessili:</span> Fibra di lana nera trovata sulla mano della vittima</li>
-                            <li><span class="highlight">Documento strappato:</span> Frammento di una lettera con la scritta "...non perdonerò mai..."</li>
-                            <li><span class="highlight">Orario dell'omicidio:</span> Stimato tra le 23:00 del 29 ottobre e l'1:00 del 30 ottobre</li>
-                        </ul>
-                        
-                        <h3>Sospetti</h3>
-                        <p>Tre persone erano presenti nel monastero la notte dell'omicidio:</p>
-                        <ul class="evidence-list">
-                            <li><span class="highlight">Fate Gregorio:</span> Confratello che aveva recentemente litigato con la vittima per questioni amministrative</li>
-                            <li><span class="highlight">Novizio Marco:</span> Scopritore del corpo, in attesa di prendere i voti</li>
-                            <li><span class="highlight">Signora Rosalia:</span> Cuoca del monastero, presente quella notte per preparazioni culinarie</li>
-                        </ul>
-                        
-                        <h3>Moventi Possibili</h3>
-                        <p>Dalle prime investigazioni emergono diversi moventi:</p>
-                        <ul class="evidence-list">
-                            <li>Frate Gregorio e la vittima avevano discusso animatamente il giorno prima per la gestione delle offerte</li>
-                            <li>Il novizio Marco era stato rimproverato pubblicamente da Frate Lorenzo per aver rotto un vaso antico</li>
-                            <li>La signora Rosalia potrebbe aver sottratto denaro dalla cassetta delle offerte, come suggerito da un biglietto anonimo trovato nella cella della vittima</li>
+                            <li><span class="highlight">Assi di legno del corrimano della scala rotte:</span> Numerose scheggie e assi attorno alla vittima dovute alla caduta</li>
+                            <li><span class="highlight">Orario dell'omicidio:</span> Stimato tra le 23:25 e le 23:30 del 21 aprile</li>
                         </ul>
                         
                         <div class="report-section">
                             <h3>NOTE INVESTIGATIVE</h3>
-                            <p>La vittima teneva un diario personale, attualmente mancante. L'ultima entry registrata è del 28 ottobre e parlava di "scoperte sconvolgenti" che avrebbero cambiato il monastero per sempre.</p>
-                            <p>La finestra della cella era chiusa dall'interno, suggerendo che l'assassino sia entrato dalla porta o fosse già all'interno.</p>
+                            <p>Sono state trovate numerose scheggie all'interno delle mani di Alicia *****, inizialmente si pensava che la vittima si fosse difesa da qualcuno, ma la mancaza di prove ha allontanato le indagini.</p>
+                            <p>Fuori dall'edificio sono state trovate solo impronte compatibili con le scarpe di Davide *****, mentre all'interno solo quelle della ragazza.</p>
                         </div>
                         
-                        <span class="timestamp">Ultimo aggiornamento: 31 ottobre 2023, ore 14:23</span>
+                        <span class="timestamp">Ultimo aggiornamento: 31 ottobre 2021, ore 20:23</span>
                     `;
                 } else if (searchTerm === 'rozenheim') {
                     searchResults.innerHTML = `
@@ -384,6 +366,48 @@
                         
                         <span class="timestamp">Ultimo aggiornamento: 2 novembre 2024, ore 14:23</span>
                     `;
+                } else if (searchTerm === 'viktor') {
+                    searchResults.innerHTML = `
+                        <h2>Risultati della ricerca: "rozenheim"</h2>
+                        
+                        <div class="report-section">
+                            <h3>REPORT POLIZIA - CASO: Omicidio in Villa Rozenheim</h3>
+                            <p><span class="highlight">Data:</span> 31 ottobre 2024</p>
+                            <p><span class="highlight">Luogo:</span> Studio privato</p>
+                            <p><span class="highlight">Vittima:</span> Dottor Viktor Rozenheim, 61 anni</p>
+                            <p><span class="highlight">Trovato da:</span> Katarina Viktoria Kinder, alle ore 21:43</p>
+                        </div>
+                        
+                        <h3>Dettagli dell'Accaduto</h3>
+                        <p>Il Dott. Viktor Rozenheim è stato trovato senza vita nel suo studio privato, chiuso a chiave dall'interno, steso per terra. La vittima non presentava segni di lotta visibili. L'arma del delitto, un lama affilata, è stata trovata ancora salda al petto del dottore.</p>
+                        
+                        <h3>Prove Trovate sulla Scena</h3>
+                        <ul class="evidence-list">
+                            <li><span class="highlight">Impronte digitali:</span> Nessuna</li>
+                            <li><span class="highlight">Fibre tessili:</span> Nessuna</li>
+                            <li><span class="highlight">Documento per divorzio:</span> Documento con la firma del dottore per il divorzio con Katarina</li>
+                            <li><span class="highlight">Orario dell'omicidio:</span> Stimato tra le 21:30 del 31 ottobre e l'21:40 del 31 ottobre</li>
+                        </ul>
+                        
+                        <h3>Sospetti</h3>
+                        <p>5 persone erano assenti al tavolo per la cena al momento della scoperta:</p>
+                        <ul class="evidence-list">
+                            <li><span class="highlight">Katarina Viktoria Kinder:</span> Moglie del defunto e brillante avvocata</li>
+                            <li><span class="highlight">Camille Flumenrush:</span> Ingegnera che lavora al Circolo da un anno, è nel team di sviluppo del Karotienen</li>
+                            <li><span class="highlight">Sophie Macarole:</span> Giornalista di grande fama e fan dei progetti del Circolo Rozenheim</li>
+                            <li><span class="highlight">Franz Oldenmonten:</span> Giovane apprendista del dottore, neolaureato a pieni voti che aveva ottenuto un tirocinio presso il Circolo</li>
+                            <li><span class="highlight">Michael Bittestein:</span> Facoltoso imprenditore tedesco interessato all'acquisto del brevetto del dispositivo</li>
+                        </ul>
+                        
+                        <div class="report-section">
+                            <h3>NOTE INVESTIGATIVE</h3>
+                            <p>Il dispositivo Karotienen, oggetto principale di discussione della cena, è stato rubato.</p>
+                            <p>La porta dello studio era chiuso dall'interno, possibile suicidio o omicidio con utilizzo di veleno.</p>
+                        </div>
+                        
+                        <span class="timestamp">Ultimo aggiornamento: 2 novembre 2024, ore 14:23</span>
+                    `;
+
                 } else if (searchTerm !== '') {
                     searchResults.innerHTML = `
                         <h2>Risultati della ricerca: "${searchTerm}"</h2>
