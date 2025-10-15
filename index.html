@@ -429,6 +429,8 @@
                     // Accesso consentito
                     loginPage.style.display = 'none';
                     mainPage.style.display = 'block';
+                    // Genera le cartelle degli anni
+                    generateYearFolders();
                 } else {
                     // Accesso negato
                     errorMsg.style.display = 'block';
