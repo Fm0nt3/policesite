@@ -204,6 +204,146 @@
             display: block;
             margin-top: 10px;
         }
+
+        /* Stili per la sezione Telecamere */
+        .cameras-section {
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .year-folders {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .year-folder {
+            background-color: #2c2c2c;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .year-folder:hover {
+            background-color: #3a3a3a;
+            border-color: #d32f2f;
+            transform: translateY(-3px);
+        }
+        
+        .year-folder h4 {
+            color: #d32f2f;
+            margin-bottom: 5px;
+        }
+        
+        .year-folder p {
+            color: #aaa;
+            font-size: 0.9em;
+        }
+        
+        .month-folders {
+            display: none;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .month-folder {
+            background-color: #2c2c2c;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .month-folder:hover {
+            background-color: #3a3a3a;
+            border-color: #d32f2f;
+        }
+        
+        .month-folder h5 {
+            color: #e0e0e0;
+            margin-bottom: 5px;
+        }
+        
+        .month-folder p {
+            color: #aaa;
+            font-size: 0.8em;
+        }
+        
+        .camera-images {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #2c2c2c;
+            border-radius: 4px;
+        }
+        
+        .camera-images h3 {
+            color: #e0e0e0;
+            margin-bottom: 15px;
+        }
+        
+        .images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .camera-image {
+            background-color: #1a1a1a;
+            border-radius: 4px;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .camera-image img {
+            max-width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .camera-image p {
+            color: #aaa;
+            font-size: 0.9em;
+        }
+        
+        .placeholder-image {
+            width: 100%;
+            height: 150px;
+            background-color: #333;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            color: #888;
+        }
+        
+        .back-button {
+            background-color: #444;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .back-button:hover {
+            background-color: #555;
+        }
     </style>
 </head>
 <body>
@@ -241,6 +381,24 @@
                     <p>Inserire un termine di ricerca (in minuscolo) per cercare informazioni sul database.</p>
                 </div>
             </div>
+
+            <!-- Archivio telecamere in basso -->
+            <div class="cameras-section">
+                <h2>Archivio Telecamere</h2>
+                <p>Seleziona un anno per visualizzare i mesi disponibili.</p>
+                
+                <div class="year-folders">
+                    <!-- Le cartelle degli anni verranno generate dinamicamente con JavaScript -->
+                </div>
+                
+                <div class="month-folders">
+                    <!-- Le cartelle dei mesi verranno caricate qui dinamicamente -->
+                </div>
+                
+                <div id="cameraImages" class="camera-images">
+                    <!-- Le immagini delle telecamere verranno caricate qui dinamicamente -->
+                </div>
+            </div>
         </div>
 
         <footer>
@@ -258,6 +416,9 @@
             const searchBtn = document.getElementById('searchBtn');
             const searchInput = document.getElementById('searchInput');
             const searchResults = document.querySelector('.search-results');
+            const yearFolders = document.querySelector('.year-folders');
+            const monthFolders = document.querySelector('.month-folders');
+            const cameraImages = document.getElementById('cameraImages');
             
             // Funzione di login
             loginBtn.addEventListener('click', function() {
@@ -451,6 +612,133 @@
                     searchResults.innerHTML = `<p>Inserire un termine di ricerca per investigare sul caso.</p>`;
                 }
             });
+
+            // Funzione per generare le cartelle degli anni
+            function generateYearFolders() {
+                // Anni disponibili (escludendo 2010, 2015, 2018, 2019, 2022)
+                const availableYears = [2011, 2012, 2013, 2016, 2017, 2020, 2021, 2025];
+                
+                availableYears.forEach(year => {
+                    const folder = document.createElement('div');
+                    folder.className = 'year-folder';
+                    folder.dataset.year = year;
+                    
+                    folder.innerHTML = `
+                        <h4>${year}</h4>
+                        <p>Archivio telecamere</p>
+                    `;
+                    
+                    folder.addEventListener('click', function() {
+                        showMonthFolders(year);
+                    });
+                    
+                    yearFolders.appendChild(folder);
+                });
+            }
+            
+            // Funzione per mostrare le cartelle dei mesi per un anno specifico
+            function showMonthFolders(year) {
+                // Nascondi le cartelle degli anni
+                yearFolders.style.display = 'none';
+                
+                // Mostra le cartelle dei mesi
+                monthFolders.style.display = 'grid';
+                
+                // Pulisci le cartelle dei mesi esistenti
+                monthFolders.innerHTML = '';
+                
+                // Aggiungi il pulsante per tornare indietro
+                const backButton = document.createElement('button');
+                backButton.className = 'back-button';
+                backButton.textContent = '← Torna agli anni';
+                backButton.addEventListener('click', goBackToYears);
+                monthFolders.appendChild(backButton);
+                
+                // Aggiungi titolo
+                const title = document.createElement('h3');
+                title.textContent = `Seleziona un mese - Anno ${year}`;
+                monthFolders.appendChild(title);
+                
+                // Mesi dell'anno
+                const months = [
+                    'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
+                    'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'
+                ];
+                
+                // Crea le cartelle per ogni mese
+                months.forEach((month, index) => {
+                    const monthFolder = document.createElement('div');
+                    monthFolder.className = 'month-folder';
+                    monthFolder.dataset.month = index + 1;
+                    
+                    monthFolder.innerHTML = `
+                        <h5>${month}</h5>
+                        <p>Foto telecamere</p>
+                    `;
+                    
+                    monthFolder.addEventListener('click', function() {
+                        showCameraImages(year, month, index + 1);
+                    });
+                    
+                    monthFolders.appendChild(monthFolder);
+                });
+            }
+            
+            // Funzione per mostrare le immagini delle telecamere per un mese specifico
+            function showCameraImages(year, month, monthNumber) {
+                // Nascondi le cartelle dei mesi
+                monthFolders.style.display = 'none';
+                
+                // Mostra le immagini delle telecamere
+                cameraImages.style.display = 'block';
+                
+                // Aggiungi il pulsante per tornare indietro
+                cameraImages.innerHTML = `
+                    <button class="back-button" onclick="goBackToMonths()">← Torna ai mesi</button>
+                    <h3>Immagini Telecamere - ${month} ${year}</h3>
+                    <div class="images-grid">
+                        <!-- Le immagini verranno caricate qui -->
+                        <div class="camera-image">
+                            <div class="placeholder-image">Immagine 1</div>
+                            <p>Telecamera Stazione Centrale</p>
+                        </div>
+                        <div class="camera-image">
+                            <div class="placeholder-image">Immagine 2</div>
+                            <p>Telecamera Via Roma</p>
+                        </div>
+                        <div class="camera-image">
+                            <div class="placeholder-image">Immagine 3</div>
+                            <p>Telecamera Piazza Garibaldi</p>
+                        </div>
+                        <div class="camera-image">
+                            <div class="placeholder-image">Immagine 4</div>
+                            <p>Telecamera Corso Vittorio</p>
+                        </div>
+                        <div class="camera-image">
+                            <div class="placeholder-image">Immagine 5</div>
+                            <p>Telecamera Via Milano</p>
+                        </div>
+                        <div class="camera-image">
+                            <div class="placeholder-image">Immagine 6</div>
+                            <p>Telecamera Parco Centrale</p>
+                        </div>
+                    </div>
+                    <p class="timestamp">Archivio telecamere ${month} ${year} - Ultimo aggiornamento: ${new Date().toLocaleDateString('it-IT')}</p>
+                `;
+            }
+            
+            // Funzione per tornare alle cartelle degli anni
+            function goBackToYears() {
+                monthFolders.style.display = 'none';
+                cameraImages.style.display = 'none';
+                yearFolders.style.display = 'grid';
+            }
+            
+            // Funzione per tornare alle cartelle dei mesi
+            window.goBackToMonths = function() {
+                cameraImages.style.display = 'none';
+                monthFolders.style.display = 'grid';
+            };
             
             // Aggiungi stili per l'animazione shake
             const style = document.createElement('style');
