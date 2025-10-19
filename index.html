@@ -780,26 +780,25 @@
                 `;
 
                 const imagesGrid = document.getElementById('imagesGrid');
-                const descriptions = yearData[month] || [
-                    "Telecamera 1",
-                    "Telecamera 2",
-                    "Telecamera 3",
-                    "Telecamera 4",
-                    "Telecamera 5",
-                    "Telecamera 6"
-                ];
+                const yearData = cameraDescriptions[year] || {};
+                const descriptions = yearData[month] || [];
 
-                descriptions.forEach((desc, index) => {
+                if (descriptions.length === 0) {
+                    imagesGrid.innerHTML = `<p>Nessuna immagine disponibile per questo periodo.</p>`;
+                    return;
+                }
+
+                descriptions.forEach((item, index) => {
                     const camDiv = document.createElement('div');
                     camDiv.className = 'camera-image';
                     camDiv.innerHTML = `
-                        <div class="placeholder-image">Immagine ${index + 1}</div>
-                        <p>${desc}</p>
+                        <img src="${item.image}" alt="Telecamera ${index + 1}">
+                        <p>${item.text}</p>
                     `;
                     imagesGrid.appendChild(camDiv);
                 });
             }
-            
+
             // Funzione per tornare alle cartelle degli anni
             function goBackToYears() {
                 monthFolders.style.display = 'none';
