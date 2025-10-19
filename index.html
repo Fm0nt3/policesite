@@ -740,10 +740,25 @@
                 `;
 
                 const imagesGrid = document.getElementById('imagesGrid');
-                const descriptions = cameraDescriptions[month] || [
-                    "Telecamera 1", "Telecamera 2", "Telecamera 3",
-                    "Telecamera 4", "Telecamera 5", "Telecamera 6"
-                ];
+                const cameraDescriptions = {
+                    "Febbraio": [
+                        "Telecamera Stazione Centrale - movimento sospetto ore 22:10",
+                        "Telecamera Via Roma - nessuna attività rilevante",
+                        "Telecamera Piazza Garibaldi - veicolo nero non identificato",
+                        "Telecamera Corso Vittorio - traffico intenso",
+                        "Telecamera Via Milano - individuo con cappuccio",
+                        "Telecamera Parco Centrale - area deserta"
+                    ],
+                    "Marzo": [
+                        "Ingresso Est - anomalie rilevate",
+                        "Zona industriale - carico non autorizzato",
+                        "Piazza del Mercato - soggetto maschile fermato",
+                        "Via delle Rose - pioggia forte, visibilità scarsa",
+                        "Deposito Nord - luce accesa di notte",
+                        "Cortile interno - tutto regolare"
+                    ]
+                };
+
 
                 descriptions.forEach((desc, index) => {
                     const camDiv = document.createElement('div');
