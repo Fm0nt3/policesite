@@ -439,6 +439,44 @@
             const yearFolders = document.querySelector('.year-folders');
             const monthFolders = document.querySelector('.month-folders');
             const cameraImages = document.getElementById('cameraImages');
+            const cameraDescriptions = {
+                2011: {
+                    "Febbraio": [
+                        "Telecamera stazione sud - nebbia fitta, visibilità scarsa",
+                        "Telecamera porto - traffico ridotto",
+                        "Telecamera centro storico - pattuglia in perlustrazione",
+                        "Telecamera via delle rose - segnalato passaggio sospetto",
+                        "Telecamera mercato - chiuso per lavori",
+                        "Telecamera parco - area isolata"
+                    ],
+                    "Marzo": [
+                        "Telecamera via Milano - soggetto con cappotto lungo",
+                        "Telecamera via Roma - tutto tranquillo",
+                        "Telecamera stazione centrale - manutenzione in corso",
+                        "Telecamera deposito nord - accesso non autorizzato alle 23:47",
+                        "Telecamera parco - bambini che giocano (giorno)",
+                        "Telecamera piazza - evento pubblico"
+                    ]
+                },
+                2012: {
+                    "Giugno": [
+                        "Telecamera magazzino industriale - camion fermo da ore",
+                        "Telecamera centro commerciale - luci spente prima dell’orario",
+                        "Telecamera via dei Tigli - donna con cappello rosso",
+                        "Telecamera autostrada nord - incidente segnalato",
+                        "Telecamera casello - rallentamento veicoli",
+                        "Telecamera stazione - binario 4 vuoto"
+                    ],
+                    "Settembre": [
+                        "Telecamera porto - arrivo nave non registrata",
+                        "Telecamera dogana - controllo straordinario",
+                        "Telecamera piazza Garibaldi - manifestazione autorizzata",
+                        "Telecamera zona industriale - carico notturno sospetto",
+                        "Telecamera via Roma - auto scura senza targa anteriore",
+                        "Telecamera parco cittadino - cane randagio avvistato"
+                    ]
+                }
+            };
             
             // Funzione di login
             loginBtn.addEventListener('click', function() {
@@ -740,25 +778,14 @@
                 `;
 
                 const imagesGrid = document.getElementById('imagesGrid');
-                const cameraDescriptions = {
-                    "Febbraio": [
-                        "Telecamera Stazione Centrale - movimento sospetto ore 22:10",
-                        "Telecamera Via Roma - nessuna attività rilevante",
-                        "Telecamera Piazza Garibaldi - veicolo nero non identificato",
-                        "Telecamera Corso Vittorio - traffico intenso",
-                        "Telecamera Via Milano - individuo con cappuccio",
-                        "Telecamera Parco Centrale - area deserta"
-                    ],
-                    "Marzo": [
-                        "Ingresso Est - anomalie rilevate",
-                        "Zona industriale - carico non autorizzato",
-                        "Piazza del Mercato - soggetto maschile fermato",
-                        "Via delle Rose - pioggia forte, visibilità scarsa",
-                        "Deposito Nord - luce accesa di notte",
-                        "Cortile interno - tutto regolare"
-                    ]
-                };
-
+                const descriptions = yearData[month] || [
+                    "Telecamera 1",
+                    "Telecamera 2",
+                    "Telecamera 3",
+                    "Telecamera 4",
+                    "Telecamera 5",
+                    "Telecamera 6"
+                ];
 
                 descriptions.forEach((desc, index) => {
                     const camDiv = document.createElement('div');
