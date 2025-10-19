@@ -729,52 +729,40 @@
             
             // Funzione per mostrare le immagini delle telecamere per un mese specifico
             function showCameraImages(year, month, monthNumber) {
-                // Nascondi le cartelle dei mesi
                 monthFolders.style.display = 'none';
-                
-                // Mostra le immagini delle telecamere
                 cameraImages.style.display = 'block';
-                
-                // Aggiungi il pulsante per tornare indietro
+
                 cameraImages.innerHTML = `
                     <button class="back-button" onclick="goBackToMonths()">← Torna ai mesi</button>
                     <h3>Immagini Telecamere - ${month} ${year}</h3>
-                    <div class="images-grid">
-                        <!-- Le immagini verranno caricate qui -->
-                        <div class="camera-image">
-                            <div class="placeholder-image">Immagine 1</div>
-                            <p>Telecamera Stazione Centrale</p>
-                        </div>
-                        <div class="camera-image">
-                            <div class="placeholder-image">Immagine 2</div>
-                            <p>Telecamera Via Roma</p>
-                        </div>
-                        <div class="camera-image">
-                            <div class="placeholder-image">Immagine 3</div>
-                            <p>Telecamera Piazza Garibaldi</p>
-                        </div>
-                        <div class="camera-image">
-                            <div class="placeholder-image">Immagine 4</div>
-                            <p>Telecamera Corso Vittorio</p>
-                        </div>
-                        <div class="camera-image">
-                            <div class="placeholder-image">Immagine 5</div>
-                            <p>Telecamera Via Milano</p>
-                        </div>
-                        <div class="camera-image">
-                            <div class="placeholder-image">Immagine 6</div>
-                            <p>Telecamera Parco Centrale</p>
-                        </div>
-                    </div>
+                    <div class="images-grid" id="imagesGrid"></div>
                     <p class="timestamp">Archivio telecamere ${month} ${year} - Ultimo aggiornamento: ${new Date().toLocaleDateString('it-IT')}</p>
                 `;
+
+                const imagesGrid = document.getElementById('imagesGrid');
+                const descriptions = cameraDescriptions[month] || [
+                    "Telecamera 1", "Telecamera 2", "Telecamera 3",
+                    "Telecamera 4", "Telecamera 5", "Telecamera 6"
+                ];
+
+                descriptions.forEach((desc, index) => {
+                    const camDiv = document.createElement('div');
+                    camDiv.className = 'camera-image';
+                    camDiv.innerHTML = `
+                        <div class="placeholder-image">Immagine ${index + 1}</div>
+                        <p>${desc}</p>
+                    `;
+                    imagesGrid.appendChild(camDiv);
+                });
+
+                    <p class="timestamp">Archivio telecamere ${month} ${year} - Ultimo aggiornamento: ${new Date().toLocaleDateString('it-IT')}</p>
             }
             
             // Funzione per tornare alle cartelle degli anni
             function goBackToYears() {
                 monthFolders.style.display = 'none';
                 cameraImages.style.display = 'none';
-                yearFolders.style.display = 'grid';
+                    yearFolders.style.display = 'grid';
             }
             
             // Funzione per tornare alle cartelle dei mesi
