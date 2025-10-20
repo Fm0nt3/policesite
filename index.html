@@ -481,6 +481,7 @@
             };
             
             // Funzione di login
+            let attempts = 0;
             loginBtn.addEventListener('click', function() {
                 const username = document.getElementById('username').value;
                 const password = document.getElementById('password').value;
@@ -493,8 +494,18 @@
                     generateYearFolders();
                 } else {
                     // Accesso negato
+                    attempts++;
                     errorMsg.style.display = 'block';
                     document.getElementById('password').value = '';
+
+                    if (attempts === 5) {
+                        const hint = document.createElement('p');
+                        hint.style.color = '#aaa';
+                        hint.style.textAlign = 'center';
+                        hint.style.marginTop = '10px';
+                        hint.textContent = 'Consiglio di sistema: a volte la chiave è nel cammino.';
+                        loginPage.querySelector('.login-container').appendChild(hint);
+                    }
                     
                     // Shake animation per indicare errore
                     loginPage.style.animation = 'shake 0.5s';
