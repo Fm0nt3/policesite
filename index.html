@@ -541,12 +541,19 @@
                     errorMsg.style.display = 'block';
                     document.getElementById('password').value = '';
 
-                    if (attempts === 5) {
+                    if (attempts === 4) {
                         const hint = document.createElement('p');
                         hint.style.color = '#aaa';
                         hint.style.textAlign = 'center';
                         hint.style.marginTop = '10px';
                         hint.textContent = 'Consiglio di sistema: a volte la chiave è nel cammino.';
+                        loginPage.querySelector('.login-container').appendChild(hint);
+                    } else if (attempts === 8) {
+                        const hint = document.createElement('p');
+                        hint.style.color = '#aaa';
+                        hint.style.textAlign = 'center';
+                        hint.style.marginTop = '10px';
+                        hint.textContent = 'Consiglio di sistema: formato nome+anno.';
                         loginPage.querySelector('.login-container').appendChild(hint);
                     }
                     
