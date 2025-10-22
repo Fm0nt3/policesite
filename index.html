@@ -401,6 +401,37 @@
             font-size: 16px;
         }
 
+        .interrogation-folders {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .interrogation-folder {
+            background-color: #2c2c2c;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .interrogation-folder:hover {
+            background-color: #3a3a3a;
+            border-color: #d32f2f;
+            transform: translateY(-2px);
+        }
+
+        .interrogation-content {
+            background-color: #1a1a1a;
+            border-left: 4px solid #d32f2f;
+            border-radius: 4px;
+            padding: 20px;
+            color: #ddd;
+        }
 
     </style>
 </head>
@@ -486,8 +517,8 @@
                 2009: {
                     "Febbraio": [
                         {
-                            image: "scenacrimine.jpeg",
-                            text: "prova"
+                            image: "CCTV/CCTV1.jpeg",
+                            text: ""
                         },
                     ],
                     "Marzo": [
@@ -940,6 +971,79 @@
                         <span class="timestamp">Ultimo aggiornamento: 2 novembre 2024, ore 14:23</span>
                     `;
 
+                } else if (searchTerm === 'ettore') {
+                    searchResults.innerHTML = `
+                        <h2>Risultati della ricerca: "ettore"</h2>
+
+                        <div class="report-section">
+                            <h3>ARCHIVIO INTERROGATORI - CASO ALICIA CAYADA</h3>
+                            <p><span class="highlight">Agente incaricato:</span> Ines Cabral</p>
+                            <p><span class="highlight">Data:</span> 27 maggio 2012</p>
+                            <p>Seleziona un fascicolo per visualizzare la trascrizione dell'interrogatorio.</p>
+                        </div>
+
+                        <div class="interrogation-folders">
+                            <div class="interrogation-folder" data-person="juan">Juan Lopez</div>
+                            <div class="interrogation-folder" data-person="manuel">Manuel García</div>
+                            <div class="interrogation-folder" data-person="ines">Ines Cabral</div>
+                            <div class="interrogation-folder" data-person="ettore">Ettore Scala</div>
+                            <div class="interrogation-folder" data-person="sofia">Sofia Alvarez</div>
+                        </div>
+
+                        <div id="interrogation-content" class="interrogation-content">
+                            <p>Seleziona un fascicolo per leggere la trascrizione.</p>
+                        </div>
+
+                        <div class="media-section">
+                            <h3>Materiale Fotografico</h3>
+                            <div class="media-content">
+                                <img src="foto_ettore.jpg" alt="Foto dell'interrogatorio" style="width:70%; max-width:400px; display:block; margin:0 auto 15px; border-radius:4px;">
+                                <p style="text-align:center; color:#ccc;">Scatto durante l'interrogatorio di Ettore Scala nella sala 3 della centrale di Coruñas.</p>
+                            </div>
+                        </div>
+                    `;
+
+                    // Crea trascrizioni diverse per ciascun fascicolo
+                    const interrogations = {
+                        juan: `
+                            <h3>Interrogatorio - Juan Lopez</h3>
+                            <p><strong>Poliziotto:</strong> Sei stato tu a vedere Alicia per l’ultima volta?</p>
+                            <p><strong>Juan:</strong> Sì, ma solo per pochi minuti. Era nervosa, diceva che doveva chiarire una cosa con Ettore.</p>
+                        `,
+                        manuel: `
+                            <h3>Interrogatorio - Manuel García</h3>
+                            <p><strong>Poliziotto:</strong> Quando l’hai vista l’ultima volta?</p>
+                            <p><strong>Manuel:</strong> Alla festa, credo verso le undici. Non so perché se ne sia andata da sola.</p>
+                        `,
+                        ines: `
+                            <h3>Appunto Interno - Agente Ines Cabral</h3>
+                            <p><strong>Nota:</strong> Ettore Scala mostra segnali di agitazione, ma nessun segno evidente di menzogna. Richiedere un secondo colloquio.</p>
+                        `,
+                        ettore: `
+                            <h3>Interrogatorio - Ettore Scala</h3>
+                            <p><strong>Poliziotto:</strong> Ettore, perché Alicia ti ha cercato quella sera?</p>
+                            <p><strong>Ettore:</strong> Non lo so. Forse per il telefono che aveva trovato, ma non c’entro con la sua scomparsa.</p>
+                            <p><strong>Poliziotto:</strong> Eppure qualcuno ha sentito una lite tra voi due.</p>
+                            <p><strong>Ettore:</strong> Non era una lite... era un addio.</p>
+                        `,
+                        sofia: `
+                            <h3>Interrogatorio - Sofia Alvarez</h3>
+                            <p><strong>Poliziotto:</strong> Sei la proprietaria dell’edificio dove è sparita Alicia. Come spieghi le macchie di sangue?</p>
+                            <p><strong>Sofia:</strong> Lì non entra nessuno da anni... non so come siano finite quelle tracce.</p>
+                        `
+                    };
+
+                    // Gestisci click sui fascicoli
+                    const folders = document.querySelectorAll('.interrogation-folder');
+                    const contentDiv = document.getElementById('interrogation-content');
+
+                    folders.forEach(folder => {
+                        folder.addEventListener('click', function() {
+                            const person = this.dataset.person;
+                            contentDiv.innerHTML = interrogations[person] || "<p>Nessuna trascrizione disponibile.</p>";
+                        });
+                    });
+                    
                 } else if (searchTerm !== '') {
                     searchResults.innerHTML = `
                         <h2>Risultati della ricerca: "${searchTerm}"</h2>
@@ -999,7 +1103,7 @@
                 // Mesi dell'anno
                 const months = [
                     'Febbraio', 'Marzo', 'Maggio', 'Luglio',
-                     'Settembre', 'Ottobre', 'Novembre'
+                     'Agosto', 'Ottobre', 'Novembre'
                 ];
                 
                 // Crea le cartelle per ogni mese
