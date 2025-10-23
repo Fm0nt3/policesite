@@ -1028,7 +1028,7 @@
                         <div class="media-section">
                             <h3>Materiale Fotografico</h3>
                             <div class="media-content">
-                                <img src="CCTV/sitopolizia.png" alt="Foto stanza" style="width:70%; max-width:400px; display:block; margin:0 auto 15px; border-radius:4px;">
+                                <img id="fotoEttore" src="CCTV/sitopolizia.png" alt="Foto stanza" style="width:70%; max-width:400px; display:block; margin:0 auto 15px; border-radius:4px; cursor: zoom-in;">
                                 <p style="text-align:center; color:#ccc;">Scatto all'interno della stanza di Ettore nel Monastero di San Andro Pertiños.</p>
                             </div>
                         </div>
@@ -1128,6 +1128,13 @@
                             contentDiv.innerHTML = interrogations[person] || "<p>Nessuna trascrizione disponibile.</p>";
                         });
                     });
+                    
+                    const fotoEttore = document.getElementById("fotoEttore");
+                    if (fotoEttore) {
+                        fotoEttore.addEventListener("click", function() {
+                            openImageModal("CCTV/sitopolizia.png", "Stanza di Ettore nel monastero");
+                        });
+                    }
                     
                 } else if (searchTerm !== '') {
                     searchResults.innerHTML = `
