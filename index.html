@@ -999,7 +999,7 @@
                         <span class="timestamp">Ultimo aggiornamento: 2 novembre 2024, ore 14:23</span>
                     `;
 
-                } else if (searchTerm === 'qwertyu') {
+                } else if (searchTerm === 'Ettore') {
                     searchResults.innerHTML = `
                         <h2>Risultati della ricerca: "ettore"</h2>
 
@@ -1026,6 +1026,10 @@
                             <div class="media-content">
                                 <img id="fotoEttore" src="CCTV/sitopolizia.png" alt="Foto stanza" style="width:70%; max-width:400px; display:block; margin:0 auto 15px; border-radius:4px; cursor: zoom-in;">
                                 <p style="text-align:center; color:#ccc;">Scatto all'interno della stanza di Ettore nel Monastero di San Andro Pertiños.</p>
+                                <!-- Nuova immagine zoomabile -->
+                                <img id="fotoEttore2" src="referto.jpeg" alt="Referto" style="width:70%; max-width:400px; display:block; margin:20px auto 15px; border-radius:4px; cursor: zoom-in;">
+                                <p style="text-align:center; color:#ccc;">Referto Ettore Scala.</p>
+
                             </div>
                         </div>
                     `;
@@ -1129,6 +1133,13 @@
                     if (fotoEttore) {
                         fotoEttore.addEventListener("click", function() {
                             openImageModal("CCTV/sitopolizia.png", "Stanza di Ettore nel monastero");
+                        });
+                    }
+                    // Aggiunge lo zoom anche alla seconda foto
+                    const fotoEttore2 = document.getElementById("fotoEttore2");
+                    if (fotoEttore2) {
+                        fotoEttore2.addEventListener("click", function() {
+                            openImageModal("referto.jpeg", "Referto medico Ettore");
                         });
                     }
                     
