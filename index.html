@@ -1186,7 +1186,8 @@
                             <div class="media-content">
                                 <img id="fotoEttore" src="CCTV/sitopolizia.png" alt="Foto stanza" style="width:70%; max-width:400px; display:block; margin:0 auto 15px; border-radius:4px; cursor: zoom-in;">
                                 <p style="text-align:center; color:#ccc;">Scatto all'interno della stanza di Ettore nel Monastero di San Andro Pertiños.</p>
-                                <!-- Nuova immagine zoomabile -->
+                                <img id="fotoEttore3" src="biglietto.png" alt="Biglietto" style="width:70%; max-width:400px; display:block; margin:20px auto 15px; border-radius:4px; cursor: zoom-in;">
+                                <p style="text-align:center; color:#ccc;">Bigliettino trovato sul tavolo nella stanza di Ettore.</p>
                                 <img id="fotoEttore2" src="referto.jpeg" alt="Referto" style="width:70%; max-width:400px; display:block; margin:20px auto 15px; border-radius:4px; cursor: zoom-in;">
                                 <p style="text-align:center; color:#ccc;">Referto Ettore Scala.</p>
 
@@ -1299,9 +1300,15 @@
                     const fotoEttore2 = document.getElementById("fotoEttore2");
                     if (fotoEttore2) {
                         fotoEttore2.addEventListener("click", function() {
-                            openImageModal("referto.jpeg", "Referto medico Ettore");
+                            openImageModal("referto.jpeg", "Referto Ettore Scala");
                         });
                     } 
+                    const fotoEttore3 = document.getElementById("fotoEttore3");
+                    if (fotoEttore3) {
+                        fotoEttore3.addEventListener("click", function() {
+                            openImageModal("biglietto.png", "Bigliettino trovato sul tavolo nella stanza di Ettore");
+                        });
+                    }
                 }   else if (searchTerm === 'ettorererere scala') {
                     searchResults.innerHTML = `
                         <h2>Risultati della ricerca: "ettore scala"</h2>
@@ -1329,7 +1336,8 @@
                             <div class="media-content">
                                 <img id="fotoEttore" src="CCTV/sitopolizia.png" alt="Foto stanza" style="width:70%; max-width:400px; display:block; margin:0 auto 15px; border-radius:4px; cursor: zoom-in;">
                                 <p style="text-align:center; color:#ccc;">Scatto all'interno della stanza di Ettore nel Monastero di San Andro Pertiños.</p>
-                                <!-- Nuova immagine zoomabile -->
+                                <img id="fotoEttore3" src="biglietto.png" alt="Biglietto" style="width:70%; max-width:400px; display:block; margin:20px auto 15px; border-radius:4px; cursor: zoom-in;">
+                                <p style="text-align:center; color:#ccc;">Bigliettino trovato sul tavolo nella stanza di Ettore.</p>                                                                                                                                                                                                                                                                                                                                                                                  
                                 <img id="fotoEttore2" src="referto.jpeg" alt="Referto" style="width:70%; max-width:400px; display:block; margin:20px auto 15px; border-radius:4px; cursor: zoom-in;">
                                 <p style="text-align:center; color:#ccc;">Referto Ettore Scala.</p>
 
@@ -1442,7 +1450,7 @@
                     const fotoEttore2 = document.getElementById("fotoEttore2");
                     if (fotoEttore2) {
                         fotoEttore2.addEventListener("click", function() {
-                            openImageModal("referto.jpeg", "Referto medico Ettore");
+                            openImageModal("referto.jpeg", "Referto Ettore Scala");
                         });
                     }
                     
