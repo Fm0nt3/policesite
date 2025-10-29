@@ -1316,7 +1316,40 @@
                         <h2>Risultati della ricerca: "ettore"</h2>
 
                         <div class="report-section">
-                            <h3>ARCHIVIO INTERROGATORI - CASO Ettore Scala</h3>
+                            <h3>ARCHIVIO - CASO Ettore Scala</h3>
+                            <p><span class="highlight">Agente incaricato:</span> Ines Cabral</p>
+                            <p><span class="highlight">Data:</span> 1 novembre 2025</p>
+                        </div>
+
+                        <div class="media-section">
+                            <h3>Materiale Fotografico</h3>
+                            <div class="media-content">
+                                <img id="fotoEttore" src="CCTV/sitopolizia.png" alt="Foto stanza" style="width:70%; max-width:400px; display:block; margin:0 auto 15px; border-radius:4px; cursor: zoom-in;">
+                                <p style="text-align:center; color:#ccc;">Scatto all'interno della stanza di Ettore nel Monastero di San Andro Pertiños.</p>
+                                <img id="fotoEttore3" src="biglietto.png" alt="Biglietto" style="width:70%; max-width:400px; display:block; margin:20px auto 15px; border-radius:4px; cursor: zoom-in;">
+                                <p style="text-align:center; color:#ccc;">Bigliettino trovato sul tavolo nella stanza di Ettore.</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    const fotoEttore = document.getElementById("fotoEttore");
+                    if (fotoEttore) {
+                        fotoEttore.addEventListener("click", function() {
+                            openImageModal("CCTV/sitopolizia.png", "Stanza di Ettore nel monastero");
+                        });
+                    } 
+                    const fotoEttore3 = document.getElementById("fotoEttore3");
+                    if (fotoEttore3) {
+                        fotoEttore3.addEventListener("click", function() {
+                            openImageModal("biglietto.png", "Bigliettino trovato sul tavolo nella stanza di Ettore");
+                        });
+                    }
+                } else if (searchTerm === 'ettore scala') {
+                    searchResults.innerHTML = `
+                        <h2>Risultati della ricerca: "ettore scala"</h2>
+
+                        <div class="report-section">
+                            <h3>ARCHIVIO - CASO Ettore Scala</h3>
                             <p><span class="highlight">Agente incaricato:</span> Ines Cabral</p>
                             <p><span class="highlight">Data:</span> 1 novembre 2025</p>
                         </div>
