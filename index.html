@@ -895,7 +895,11 @@
             loginBtn.addEventListener('click', function() {
                 const username = document.getElementById('username').value;
                 const password = document.getElementById('password').value;
-                
+                if (isStep2Unlocked()) {
+                    loginPage.style.display = 'none';
+                    mainPage.style.display = 'block';
+                    return;
+                }
                 if (username === 'Ines Cabral' && password === 'santiago2021') {
                     // Accesso consentito
                     loginPage.style.display = 'none';
