@@ -567,6 +567,14 @@
             function isStep2Unlocked() {
                 return (Date.now() - ensureGameStartTime()) >= STEP2_DELAY_MS;
             }
+
+            if (isStep2Unlocked()) {
+                // Nasconde il login e mostra direttamente il sito operativo
+                const loginPage = document.getElementById('loginPage');
+                const mainPage = document.getElementById('mainPage');
+                loginPage.style.display = 'none';
+                mainPage.style.display = 'block';
+            }
             function updateCountdown() {
                 const start = ensureGameStartTime();
                 const now = Date.now();
