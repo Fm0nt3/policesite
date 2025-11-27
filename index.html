@@ -449,7 +449,25 @@
             color: #ffcc00;
             letter-spacing: 2px;
         }
+        
+        .unlock-notification {
+            background: rgba(255, 204, 0, 0.2);
+            border: 1px solid #ffcc00;
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+            color: #ffcc00;
+            font-weight: bold;
+            text-align: center;
+            animation: pulse 1s infinite;
+            cursor: pointer;
+        }
 
+        @keyframes pulse {
+            0% { box-shadow: 0 0 5px #ffcc00; }
+            50% { box-shadow: 0 0 15px #ffcc00; }
+            100% { box-shadow: 0 0 5px #ffcc00; }
+        }
 
     </style>
 </head>
@@ -484,6 +502,9 @@
                 <div id="countdownBox" class="countdown">
                     <h3>Sblocco nuovi dati in:</h3>
                     <div id="countdownTimer">--:--</div>
+                </div>
+                <div id="unlockNotification" class="unlock-notification" style="display:none;">
+                    Nuovi dati disponibili relativi alla morte di Ettore.
                 </div>
                 <div class="search-box">
                     <input type="text" id="searchInput" placeholder="Inserisci termine di ricerca...">
@@ -577,6 +598,12 @@
             function refreshPageAfterUnlock() {
                 if (unlockedTriggered) return;
                 unlockedTriggered = true;
+
+                const box = document.getElementById("unlockNotification");
+                if (box) {
+                    box.style.display = "block";
+                    box.addEventListener("click", () => box.style.display = "none");
+                }
 
                 const input = document.getElementById("searchInput").value.trim().toLowerCase();
                 if (input === "ettore" || input === "ettore scala") {
@@ -916,6 +943,13 @@
                     localStorage.removeItem("police_game_start");
                     alert("Timer resettato! La pagina verrà ricaricata.");
                     location.reload();
+                    return;
+                } else if (searchTerm === "unlockettore") {
+                    localStorage.setItem("police_game_start", (Date.now() - STEP2_DELAY_MS).toString());
+                    alert("Dati su Ettore sbloccati immediatamente!");
+
+                    // aggiorna la pagina come se il timer fosse finito
+                    refreshPageAfterUnlock();
                     return;
                 } else if (searchTerm === 'alicia') {
                     searchResults.innerHTML = `
