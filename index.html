@@ -433,6 +433,24 @@
             color: #ddd;
         }
 
+        .countdown {
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+        }
+
+        #countdownTimer {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #ffcc00;
+            letter-spacing: 2px;
+        }
+
+
     </style>
 </head>
 <body>
@@ -462,6 +480,11 @@
         <div id="mainPage" class="main-content">
             <div class="search-system">
                 <h2>Sistema di Ricerca Dati</h2>
+
+                <div id="countdownBox" class="countdown">
+                    <h3>Sblocco nuovi dati in:</h3>
+                    <div id="countdownTimer">--:--</div>
+                </div>
                 <div class="search-box">
                     <input type="text" id="searchInput" placeholder="Inserisci termine di ricerca...">
                     <button id="searchBtn">CERCA</button>
@@ -503,6 +526,63 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const STEP2_DELAY_MINUTES = 45;
+            const STEP2_DELAY_MS = STEP2_DELAY_MINUTES * 60 * 1000;
+
+            function ensureGameStartTime() {
+                let t = localStorage.getItem('police_game_start');
+                if (!t) {
+                    t = Date.now().toString();
+                    localStorage.setItem('police_game_start', t);
+                }
+                return parseInt(t);
+            }
+
+            function minutesElapsed() {
+                const start = ensureGameStartTime();
+                return Math.floor((Date.now() - start) / 60000);
+            }
+
+            function isStep2Unlocked() {
+                return (Date.now() - ensureGameStartTime()) >= STEP2_DELAY_MS;
+            }
+            function updateCountdown() {
+                const start = ensureGameStartTime();
+                const now = Date.now();
+                const remaining = STEP2_DELAY_MS - (now - start);
+
+                const timerBox = document.getElementById("countdownTimer");
+
+                if (!timerBox) return;
+
+                if (remaining <= 0) {
+                    timerBox.textContent = "00:00";
+                    refreshPageAfterUnlock();
+                    return;
+                }
+
+                const minutes = Math.floor(remaining / 60000);
+                const seconds = Math.floor((remaining % 60000) / 1000);
+
+                timerBox.textContent = 
+                    minutes.toString().padStart(2, "0") + ":" +
+                    seconds.toString().padStart(2, "0");
+            }
+
+            setInterval(updateCountdown, 1000);
+            updateCountdown();
+
+            let unlockedTriggered = false;
+
+            function refreshPageAfterUnlock() {
+                if (unlockedTriggered) return;
+                unlockedTriggered = true;
+
+                const input = document.getElementById("searchInput").value.trim().toLowerCase();
+                if (input === "ettore" || input === "ettore scala") {
+                    document.getElementById("searchBtn").click();
+                }
+            }
             const loginBtn = document.getElementById('loginBtn');
             const errorMsg = document.getElementById('errorMsg');
             const loginPage = document.getElementById('loginPage');
@@ -1160,7 +1240,43 @@
                     `;
 
                 } else if (searchTerm === 'ettore') {
-                    searchResults.innerHTML = `
+                    if (!isStep2Unlocked()) {
+                        searchResults.innerHTML = `
+                        <h2>Risultati della ricerca: "ettore"</h2>
+
+                        <div class="report-section">
+                            <h3>ARCHIVIO - CASO Ettore Scala</h3>
+                            <p><span class="highlight">Agente incaricato:</span> Ines Cabral</p>
+                            <p><span class="highlight">Data:</span> 1 novembre 2025</p>
+                        </div>
+
+                        <div class="media-section">
+                            <h3>Materiale Fotografico</h3>
+                            <div class="media-content">
+                                <img id="fotoEttore" src="CCTV/sitopolizia.png" alt="Foto stanza" style="width:70%; max-width:400px; display:block; margin:0 auto 15px; border-radius:4px; cursor: zoom-in;">
+                                <p style="text-align:center; color:#ccc;">Scatto all'interno della stanza di Ettore nel Monastero di San Andro Pertiños.</p>
+                                <img id="fotoEttore3" src="biglietto.png" alt="Biglietto" style="width:70%; max-width:400px; display:block; margin:20px auto 15px; border-radius:4px; cursor: zoom-in;">
+                                <p style="text-align:center; color:#ccc;">Bigliettino trovato sul tavolo nella stanza di Ettore.</p>
+                            </div>
+                        </div>
+                        `;
+
+                        const fotoEttore = document.getElementById("fotoEttore");
+                        if (fotoEttore) {
+                            fotoEttore.addEventListener("click", function() {
+                                openImageModal("CCTV/sitopolizia.png", "Stanza di Ettore nel monastero");
+                            });
+                        } 
+                        const fotoEttore3 = document.getElementById("fotoEttore3");
+                        if (fotoEttore3) {
+                            fotoEttore3.addEventListener("click", function() {
+                                openImageModal("biglietto.png", "Bigliettino trovato sul tavolo nella stanza di Ettore");
+                            });
+                        }
+
+                    // STEP 2: dopo 45 minuti → versione completa con interrogatori + referto
+                    } else {
+                        searchResults.innerHTML = `
                         <h2>Risultati della ricerca: "ettore"</h2>
 
                         <div class="report-section">
@@ -1187,165 +1303,133 @@
                                 <img id="fotoEttore" src="CCTV/sitopolizia.png" alt="Foto stanza" style="width:70%; max-width:400px; display:block; margin:0 auto 15px; border-radius:4px; cursor: zoom-in;">
                                 <p style="text-align:center; color:#ccc;">Scatto all'interno della stanza di Ettore nel Monastero di San Andro Pertiños.</p>
                                 <img id="fotoEttore3" src="biglietto.png" alt="Biglietto" style="width:70%; max-width:400px; display:block; margin:20px auto 15px; border-radius:4px; cursor: zoom-in;">
-                                <p style="text-align:center; color:#ccc;">Bigliettino trovato sul tavolo nella stanza di Ettore.</p>
+                                <p style="text-align:center; color:#ccc;">Bigliettino trovato sul tavolo nella stanza di Ettore.</p>                                                                                                                                                                                                                                                                                                                                                                                  
                                 <img id="fotoEttore2" src="referto.jpeg" alt="Referto" style="width:70%; max-width:400px; display:block; margin:20px auto 15px; border-radius:4px; cursor: zoom-in;">
                                 <p style="text-align:center; color:#ccc;">Referto Ettore Scala.</p>
 
                             </div>
                         </div>
-                    `;
+                        `;
 
-                    // Crea trascrizioni diverse per ciascun fascicolo
-                    const interrogations = {
-                        luca: `
-                            <h3>Interrogatorio - Luca Piantagrane</h3>
-                            <p><span class="highlight">Registrazione 22:44 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
-                            <p><strong>Ispettore:</strong> Nome e cognome?</p>
-                            <p><strong>Luca:</strong> Luca Piantagrane.</p>
-                            <p><strong>Ispettore:</strong> Può dirmi che rapporto aveva con Ettore Scala?</p>
-                            <p><strong>Luca:</strong> Lo conoscevo da anni. Eravamo soci, amici… finchè non ha deciso di mollare tutto. Avevamo un progetto grosso assieme. Poi lui se n’è andato, così, da un giorno all’altro, per diventare prete.</p>
-                            <p><strong>Ispettore:</strong> Come l’ha presa?</p>
-                            <p><strong>Luca:</strong> Come vuole che l’abbia presa? Io ci avevo messo tutto, soldi, tempo, contatti. E lui mi ha rovinato. Ma non ero qui per questo, se è quello che pensa.</p>
-                            <p><strong>Ispettore:</strong> Allora perché ha accettato l’invito alla cena?</p>
-                            <p><strong>Luca:</strong> Per curiosità, forse per orgoglio. Aveva detto che voleva chiudere i conti con il passato, chiedere perdono. Beh, magari parte di me voleva sentirlo dire di persona.</p>
-                            <p><strong>Ispettore:</strong> Si direbbe scosso.</p>
-                            <p><strong>Luca:</strong> Sì, lo sono. Non lo odiavo, se è questo che vuole sapere. Era un idiota pieno di rimorsi, non un nemico… Però, glielo dico sinceramente, non piango per lui. Ha sempre pensato di poter scappare dalle sue responsabilità. Adesso… beh, non ci riuscirà più.</p>
-                            <p><strong>Ispettore:</strong> Le sue dichiarazioni sono sospette, cosa vuole lasciare intendere?</p>
-                            <p><strong>Luca:</strong> Cosa voglio lasciare intendere?! Ma per carità, non scherziamo… Ho studiato farmacia, è chiaro che ha avuto un malore, che cosa c'entro io? Non avete nulla contro di me, lasciatemi andare!</p>
-                            <p><strong>Ispettore:</strong> In realtà nella sua stanza abbiamo trovato una scatola piena di Carotiñobur, farmaco che potrebbe essere legato alla morte di Ettore. Una boccetta era mancante. Sa dirci qualcosa a riguardo?</p>
-                            <p><strong>Luca:</strong> Si, vorrei denunciare un furto. Quel farmaco è la mia ultima scoperta, l’avevo portato qui, forse ingenuamente, per convincere Ettore a tornare a lavorare assieme. Dovete credermi, è miracoloso, poteva essere l’occasione di tirare su i bilanci. Ma qualcuno è entrato nella mia stanza e l’ha rubato. Non capisco come sia possibile, mi hanno assicurato che sono l’unico ad avere una copia delle chiavi della stanza degli ospiti oltre a Padre Xamiel.</p>
-                        `,
-                        gordon: `
-                            <h3>Interrogatorio - Gordon Chico Cayada</h3>
-                            <p><span class="highlight">Registrazione 22:56 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
-                            <p><strong>Ispettore:</strong> Nome e cognome?</p>
-                            <p><strong>Gordon:</strong> Gordon Cayada.</p>
-                            <p><strong>Ispettore:</strong> Da quanto conosceva Ettore Scala?</p>
-                            <p><strong>Gordon:</strong> Dal 2012. Allora era uno studente italiano in Erasmus. Eravamo molto amici, al tempo…</p>
-                            <p><strong>Ispettore:</strong> Siete rimasti in contatto da allora?</p>
-                            <p><strong>Gordon:</strong> Non esattamente. C’è stato un episodio, una notte, quella in cui mia sorella è sparita. Lui è stato uno degli ultimi ad averla vista viva. Ha sempre negato un coinvolgimento, ma sono sicuro che almeno una parte della colpa ce l’avesse. Da allora non abbiamo più la stessa amicizia, la stessa vita di prima.</p>
-                            <p><strong>Ispettore:</strong> Quindi lo odiava.</p>
-                            <p><strong>Gordon:</strong> Sì. Per anni ammetto di averlo odiato, gli ho anche mandato una lettera in cui gli ho detto tutto ciò che pensavo di lui. Poi però… ho smesso. La rabbia non serve a niente. Quando mi ha invitato a questa cena, pensavo volesse chiedermi scusa, e alla fine ho accettato. Volevo capire se fosse davvero cambiato.</p>
-                            <p><strong>Ispettore:</strong> Come si sente adesso?</p>
-                            <p><strong>Gordon:</strong> Non lo so. Vuoto. È morto l’unico che poteva dirmi la verità su mia sorella. E la cosa peggiore è che… una parte di me pensava che questa sera fosse l’occasione per chiudere tutto. Per fare pace. Ma sembra che con Ettore le cose finiscano sempre nel modo sbagliato.</p>
-                        `,
-                        ezequiel: `
-                            <h3>Interrogatorio - Ezequiel Torres</h3>
-                            <p><span class="highlight">Registrazione 22:34 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
-                            <p><strong>Ispettore:</strong> Nome e cognome, per favore.</p>
-                            <p><strong>E. Torres:</strong> Ezequiel Torres, signore.</p>
-                            <p><strong>Ispettore:</strong> Conosceva la vittima?</p>
-                            <p><strong>E. Torres:</strong> Sì, sì, il seminarista… Ettore. Lo conoscevo. Parlava sempre con tutti, ma pure troppo. Io gli dicevo sempre: “Meglio non ficcare il naso dove non serve”. A molte persone qui gli impiccioni non piacciono.</p>
-                            <p><strong>Ispettore:</strong> Come mai era presente alla cena?</p>
-                            <p><strong>E. Torres:</strong> Ettore era così, aveva un cuore grande. Aveva invitato tutte le persone che passavano dal monastero, per tanto o per poco tempo. Mi aveva chiesto di aiutarlo ad aprire i tavoli, ed è buffo perchè ci siamo conosciuti proprio così, perchè lui mi aveva chiesto aiuto per una qualche questione in giardino che ormai non ricordo neanche più.</p>
-                            <p><strong>Ispettore:</strong> Qualcuno è entrato nella stanza di Ettore questa sera. Lei è il custode, aveva accesso a tutte le stanze? Ha notato un mazzo di chiavi sparire di recente?</p>
-                            <p><strong>E. Torres:</strong> Ho un mazzo di chiavi, sì, ma non ho accesso alle stanze private, quelle le tengono i padri. Io apro solo dove serve, e richiudo sempre. Non voglio guai.</p>
-                            <p><strong>Ispettore:</strong> Secondo lei, chi avrebbe potuto volere la morte di Ettore?</p>
-                            <p><strong>E. Torres:</strong> Ma quindi siete sicuri che è stato ammazzato? Pensavo a un infarto, con tutti i pensieri che aveva per la testa quel ragazzo. Non lo so, ma chi è stato sicuro è un uomo che ne capisce di medicina se è riuscito a farlo sembrare così naturale.</p>
-                            <p><strong>Ispettore:</strong> Ha qualcosa da aggiungere?</p>
-                            <p><strong>E. Torres:</strong> Solo questo: state attenti, voi della polizia. Qui la notte non è come fuori. Ci sono persone che tengono molto ai propri segreti… e certe porte, una volta aperte, non si richiudono più.</p>
-                        `,
-                        lucia: `
-                            <h3>Interrogatorio - Suor Lucia D'Hombres</h3>
-                            <p><span class="highlight">Registrazione 23:07 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
-                            <p><strong>Ispettore:</strong> Nome e cognome, per favore.</p>
-                            <p><strong>Suor Lucia:</strong> Chi io?</p>
-                            <p><strong>Ispettore:</strong> Si, nome e cognome.</p>
-                            <p><strong>Suor Lucia:</strong> Lucia D’Hombres.</p>
-                            <p><strong>Ispettore:</strong> Da quanto tempo vive nel monastero?</p>
-                            <p><strong>Suor Lucia:</strong> Tempo? Passa così lento. Isabel era appena andata via. Ninna nanna ninna oh questa bimba a chi la do?</p>
-                            <p><strong>Ispettore:</strong> Conosceva bene Ettore Scala?</p>
-                            <p><strong>Suor Lucia:</strong> In Biblioteca? (fissa il vuoto) Ha riportato gli ultimi libri?</p>
-                            <p><strong>Ispettore:</strong> Dov’era durante la cena?</p>
-                            <p><strong>Suor Lucia:</strong> Padre Xamiel non mi ha ancora dato le caramelle gialle. Volete un muffin?</p>
-                            <p><strong>Ispettore:</strong> Guardi la questione è seria – Ha visto qualcosa di insolito?</p>
-                            <p><strong>Suor Lucia:</strong> (fa una pausa lunga) C’era… una ragazza. In fondo al corridoio. Con i piedi scalzi. Nessuno la guardava, ma lei mi ha sorriso. Mi ha detto: “Non dire nulla, mamma, non ancora.”</p>
-                            <p><strong>Ispettore:</strong> Signora, le telecamere non hanno registrato nessun movimento insolito, non c’era nessuno nel monastero.</p>
-                            <p><strong>Suor Lucia:</strong> Il Signore perdona anche i silenzi?</p>
-                        `,
-                        xamiel: `
-                            <h3>Interrogatorio - Padre Xamiel</h3>
-                            <p><span class="highlight">Registrazione 23:22 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
-                            <p><strong>Ispettore:</strong> Nome e cognome?</p>
-                            <p><strong>Padre Xamiel:</strong> Padre Xamiel Ortega. Rettore del Monastero di San Andro Pertiños.</p>
-                            <p><strong>Ispettore:</strong> Lei era il superiore di Ettore Scala?</p>
-                            <p><strong>Padre Xamiel:</strong> Sì. Era sotto la mia guida spirituale. Un giovane brillante, promettente. La sua prematura scomparsa è davvero una tragedia.</p>
-                            <p><strong>Ispettore:</strong> Lei dov’era al momento della morte?</p>
-                            <p><strong>Padre Xamiel:</strong> A capotavola, naturalmente. Ero ospite e padrone di casa. Ho visto Ettore alzarsi per fare una chiamata. Poi è caduto. È stato un tragico malore, nient’altro.</p>
-                            <p><strong>Ispettore:</strong> Non ritiene che ci siano elementi sospetti?</p>
-                            <p><strong>Padre Xamiel:</strong> Ritengo che ci sia già abbastanza scandalo senza bisogno di aggiungerne altro. Il monastero è un luogo sacro, non un circo mediatico. Vi invito a trattare l’accaduto con la dovuta discrezione.</p>
-                            <p><strong>Ispettore:</strong> Quindi ci chiede di non indagare?</p>
-                            <p><strong>Padre Xamiel:</strong> Non rigirate le mie parole. Vi chiedo di rispettare i confini. In passato siete stati abbastanza bravi ad abbandonare le indagini, non credo sarà difficile farlo anche stavolta. Non c’è nulla da scoprire. Le vostre domande rischiano di macchiare irreversibilmente l'immagine di questo monastero.</p>
-                            <p><strong>Ispettore:</strong> Ha qualcosa da aggiungere?</p>
-                            <p><strong>Padre Xamiel:</strong> Sì. Vi consiglio di concludere presto le vostre indagini. La nostra istituzione è già abbastanza detestata. Alcune verità non servono a nessuno, soprattutto se a pagarne il prezzo è la fede del popolo.</p>
-                        `
-                    };
+                        // Trascrizioni interrogatori (copiate dal tuo codice)
+                        const interrogations = {
+                            luca: `
+                                <h3>Interrogatorio - Luca Piantagrane</h3>
+                                <p><span class="highlight">Registrazione 22:44 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
+                                <p><strong>Ispettore:</strong> Nome e cognome?</p>
+                                <p><strong>Luca:</strong> Luca Piantagrane.</p>
+                                <p><strong>Ispettore:</strong> Può dirmi che rapporto aveva con Ettore Scala?</p>
+                                <p><strong>Luca:</strong> Lo conoscevo da anni. Eravamo soci, amici… finchè non ha deciso di mollare tutto. Avevamo un progetto grosso assieme. Poi lui se n’è andato, così, da un giorno all’altro, per diventare prete.</p>
+                                <p><strong>Ispettore:</strong> Come l’ha presa?</p>
+                                <p><strong>Luca:</strong> Come vuole che l’abbia presa? Io ci avevo messo tutto, soldi, tempo, contatti. E lui mi ha rovinato. Ma non ero qui per questo, se è quello che pensa.</p>
+                                <p><strong>Ispettore:</strong> Allora perché ha accettato l’invito alla cena?</p>
+                                <p><strong>Luca:</strong> Per curiosità, forse per orgoglio. Aveva detto che voleva chiudere i conti con il passato, chiedere perdono. Beh, magari parte di me voleva sentirlo dire di persona.</p>
+                                <p><strong>Ispettore:</strong> Si direbbe scosso.</p>
+                                <p><strong>Luca:</strong> Sì, lo sono. Non lo odiavo, se è questo che vuole sapere. Era un idiota pieno di rimorsi, non un nemico… Però, glielo dico sinceramente, non piango per lui. Ha sempre pensato di poter scappare dalle sue responsabilità. Adesso… beh, non ci riuscirà più.</p>
+                                <p><strong>Ispettore:</strong> Le sue dichiarazioni sono sospette, cosa vuole lasciare intendere?</p>
+                                <p><strong>Luca:</strong> Cosa voglio lasciare intendere?! Ma per carità, non scherziamo… Ho studiato farmacia, è chiaro che ha avuto un malore, che cosa c'entro io? Non avete nulla contro di me, lasciatemi andare!</p>
+                                <p><strong>Ispettore:</strong> In realtà nella sua stanza abbiamo trovato una scatola piena di Carotiñobur, farmaco che potrebbe essere legato alla morte di Ettore. Una boccetta era mancante. Sa dirci qualcosa a riguardo?</p>
+                                <p><strong>Luca:</strong> Si, vorrei denunciare un furto. Quel farmaco è la mia ultima scoperta, l’avevo portato qui, forse ingenuamente, per convincere Ettore a tornare a lavorare assieme. Dovete credermi, è miracoloso, poteva essere l’occasione di tirare su i bilanci. Ma qualcuno è entrato nella mia stanza e l’ha rubato. Non capisco come sia possibile, mi hanno assicurato che sono l’unico ad avere una copia delle chiavi della stanza degli ospiti oltre a Padre Xamiel.</p>
+                            `,
+                            gordon: `
+                                <h3>Interrogatorio - Gordon Chico Cayada</h3>
+                                <p><span class="highlight">Registrazione 22:56 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
+                                <p><strong>Ispettore:</strong> Nome e cognome?</p>
+                                <p><strong>Gordon:</strong> Gordon Cayada.</p>
+                                <p><strong>Ispettore:</strong> Da quanto conosceva Ettore Scala?</p>
+                                <p><strong>Gordon:</strong> Dal 2012. Allora era uno studente italiano in Erasmus. Eravamo molto amici, al tempo…</p>
+                                <p><strong>Ispettore:</strong> Siete rimasti in contatto da allora?</p>
+                                <p><strong>Gordon:</strong> Non esattamente. C’è stato un episodio, una notte, quella in cui mia sorella è sparita. Lui è stato uno degli ultimi ad averla vista viva. Ha sempre negato un coinvolgimento, ma sono sicuro che almeno una parte della colpa ce l’avesse. Da allora non abbiamo più la stessa amicizia, la stessa vita di prima.</p>
+                                <p><strong>Ispettore:</strong> Quindi lo odiava.</p>
+                                <p><strong>Gordon:</strong> Sì. Per anni ammetto di averlo odiato, gli ho anche mandato una lettera in cui gli ho detto tutto ciò che pensavo di lui. Poi però… ho smesso. La rabbia non serve a niente. Quando mi ha invitato a questa cena, pensavo volesse chiedermi scusa, e alla fine ho accettato. Volevo capire se fosse davvero cambiato.</p>
+                                <p><strong>Ispettore:</strong> Come si sente adesso?</p>
+                                <p><strong>Gordon:</strong> Non lo so. Vuoto. È morto l’unico che poteva dirmi la verità su mia sorella. E la cosa peggiore è che… una parte di me pensava che questa sera fosse l’occasione per chiudere tutto. Per fare pace. Ma sembra che con Ettore le cose finiscano sempre nel modo sbagliato.</p>
+                            `,
+                            ezequiel: `
+                                <h3>Interrogatorio - Ezequiel Torres</h3>
+                                <p><span class="highlight">Registrazione 22:34 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
+                                <p><strong>Ispettore:</strong> Nome e cognome, per favore.</p>
+                                <p><strong>E. Torres:</strong> Ezequiel Torres, signore.</p>
+                                <p><strong>Ispettore:</strong> Conosceva la vittima?</p>
+                                <p><strong>E. Torres:</strong> Sì, sì, il seminarista… Ettore. Lo conoscevo. Parlava sempre con tutti, ma pure troppo. Io gli dicevo sempre: “Meglio non ficcare il naso dove non serve”. A molte persone qui gli impiccioni non piacciono.</p>
+                                <p><strong>Ispettore:</strong> Come mai era presente alla cena?</p>
+                                <p><strong>E. Torres:</strong> Ettore era così, aveva un cuore grande. Aveva invitato tutte le persone che passavano dal monastero, per tanto o per poco tempo. Mi aveva chiesto di aiutarlo ad aprire i tavoli, ed è buffo perchè ci siamo conosciuti proprio così, perchè lui mi aveva chiesto aiuto per una qualche questione in giardino che ormai non ricordo neanche più.</p>
+                                <p><strong>Ispettore:</strong> Qualcuno è entrato nella stanza di Ettore questa sera. Lei è il custode, aveva accesso a tutte le stanze? Ha notato un mazzo di chiavi sparire di recente?</p>
+                                <p><strong>E. Torres:</strong> Ho un mazzo di chiavi, sì, ma non ho accesso alle stanze private, quelle le tengono i padri. Io apro solo dove serve, e richiudo sempre. Non voglio guai.</p>
+                                <p><strong>Ispettore:</strong> Secondo lei, chi avrebbe potuto volere la morte di Ettore?</p>
+                                <p><strong>E. Torres:</strong> Ma quindi siete sicuri che è stato ammazzato? Pensavo a un infarto, con tutti i pensieri che aveva per la testa quel ragazzo. Non lo so, ma chi è stato sicuro è un uomo che ne capisce di medicina se è riuscito a farlo sembrare così naturale.</p>
+                                <p><strong>Ispettore:</strong> Ha qualcosa da aggiungere?</p>
+                                <p><strong>E. Torres:</strong> Solo questo: state attenti, voi della polizia. Qui la notte non è come fuori. Ci sono persone che tengono molto ai propri segreti… e certe porte, una volta aperte, non si richiudono più.</p>
+                            `,
+                            lucia: `
+                                <h3>Interrogatorio - Suor Lucia D'Hombres</h3>
+                                <p><span class="highlight">Registrazione 23:07 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
+                                <p><strong>Ispettore:</strong> Nome e cognome, per favore.</p>
+                                <p><strong>Suor Lucia:</strong> Chi io?</p>
+                                <p><strong>Ispettore:</strong> Si, nome e cognome.</p>
+                                <p><strong>Suor Lucia:</strong> Lucia D’Hombres.</p>
+                                <p><strong>Ispettore:</strong> Da quanto tempo vive nel monastero?</p>
+                                <p><strong>Suor Lucia:</strong> Tempo? Passa così lento. Isabel era appena andata via. Ninna nanna ninna oh questa bimba a chi la do?</p>
+                                <p><strong>Ispettore:</strong> Conosceva bene Ettore Scala?</p>
+                                <p><strong>Suor Lucia:</strong> In Biblioteca? (fissa il vuoto) Ha riportato gli ultimi libri?</p>
+                                <p><strong>Ispettore:</strong> Dov’era durante la cena?</p>
+                                <p><strong>Suor Lucia:</strong> Padre Xamiel non mi ha ancora dato le caramelle gialle. Volete un muffin?</p>
+                                <p><strong>Ispettore:</strong> Guardi la questione è seria – Ha visto qualcosa di insolito?</p>
+                                <p><strong>Suor Lucia:</strong> (fa una pausa lunga) C’era… una ragazza. In fondo al corridoio. Con i piedi scalzi. Nessuno la guardava, ma lei mi ha sorriso. Mi ha detto: “Non dire nulla, mamma, non ancora.”</p>
+                                <p><strong>Ispettore:</strong> Signora, le telecamere non hanno registrato nessun movimento insolito, non c’era nessuno nel monastero.</p>
+                                <p><strong>Suor Lucia:</strong> Il Signore perdona anche i silenzi?</p>
+                            `,
+                            xamiel: `
+                                <h3>Interrogatorio - Padre Xamiel</h3>
+                                <p><span class="highlight">Registrazione 23:22 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
+                                <p><strong>Ispettore:</strong> Nome e cognome?</p>
+                                <p><strong>Padre Xamiel:</strong> Padre Xamiel Ortega. Rettore del Monastero di San Andro Pertiños.</p>
+                                <p><strong>Ispettore:</strong> Lei era il superiore di Ettore Scala?</p>
+                                <p><strong>Padre Xamiel:</strong> Sì. Era sotto la mia guida spirituale. Un giovane brillante, promettente. La sua prematura scomparsa è davvero una tragedia.</p>
+                                <p><strong>Ispettore:</strong> Lei dov’era al momento della morte?</p>
+                                <p><strong>Padre Xamiel:</strong> A capotavola, naturalmente. Ero ospite e padrone di casa. Ho visto Ettore alzarsi per fare una chiamata. Poi è caduto. È stato un tragico malore, nient’altro.</p>
+                                <p><strong>Ispettore:</strong> Non ritiene che ci siano elementi sospetti?</p>
+                                <p><strong>Padre Xamiel:</strong> Ritengo che ci sia già abbastanza scandalo senza bisogno di aggiungerne altro. Il monastero è un luogo sacro, non un circo mediatico. Vi invito a trattare l’accaduto con la dovuta discrezione.</p>
+                                <p><strong>Ispettore:</strong> Quindi ci chiede di non indagare?</p>
+                                <p><strong>Padre Xamiel:</strong> Non rigirate le mie parole. Vi chiedo di rispettare i confini. In passato siete stati abbastanza bravi ad abbandonare le indagini, non credo sarà difficile farlo anche stavolta. Non c’è nulla da scoprire. Le vostre domande rischiano di macchiare irreversibilmente l'immagine di questo monastero.</p>
+                                <p><strong>Ispettore:</strong> Ha qualcosa da aggiungere?</p>
+                                <p><strong>Padre Xamiel:</strong> Sì. Vi consiglio di concludere presto le vostre indagini. La nostra istituzione è già abbastanza detestata. Alcune verità non servono a nessuno, soprattutto se a pagarne il prezzo è la fede del popolo.</p>
+                            `
+                        };
 
-                    // Gestisci click sui fascicoli
-                    const folders = document.querySelectorAll('.interrogation-folder');
-                    const contentDiv = document.getElementById('interrogation-content');
+                        // Gestisci click sui fascicoli
+                        const folders = document.querySelectorAll('.interrogation-folder');
+                        const contentDiv = document.getElementById('interrogation-content');
 
-                    folders.forEach(folder => {
-                        folder.addEventListener('click', function() {
-                            const person = this.dataset.person;
-                            contentDiv.innerHTML = interrogations[person] || "<p>Nessuna trascrizione disponibile.</p>";
+                        folders.forEach(folder => {
+                            folder.addEventListener('click', function() {
+                                const person = this.dataset.person;
+                                contentDiv.innerHTML = interrogations[person] || "<p>Nessuna trascrizione disponibile.</p>";
+                            });
                         });
-                    });
-                    
-                    const fotoEttore = document.getElementById("fotoEttore");
-                    if (fotoEttore) {
-                        fotoEttore.addEventListener("click", function() {
-                            openImageModal("CCTV/sitopolizia.png", "Stanza di Ettore nel monastero");
-                        });
+                        
+                        const fotoEttore = document.getElementById("fotoEttore");
+                        if (fotoEttore) {
+                            fotoEttore.addEventListener("click", function() {
+                                openImageModal("CCTV/sitopolizia.png", "Stanza di Ettore nel monastero");
+                            });
+                        }
+                        const fotoEttore2 = document.getElementById("fotoEttore2");
+                        if (fotoEttore2) {
+                            fotoEttore2.addEventListener("click", function() {
+                                openImageModal("referto.jpeg", "Referto Ettore Scala");
+                            });
+                        } 
+                        const fotoEttore3 = document.getElementById("fotoEttore3");
+                        if (fotoEttore3) {
+                            fotoEttore3.addEventListener("click", function() {
+                                openImageModal("biglietto.png", "Bigliettino trovato sul tavolo nella stanza di Ettore");
+                            });
+                        }
                     }
-                    // Aggiunge lo zoom anche alla seconda foto
-                    const fotoEttore2 = document.getElementById("fotoEttore2");
-                    if (fotoEttore2) {
-                        fotoEttore2.addEventListener("click", function() {
-                            openImageModal("referto.jpeg", "Referto Ettore Scala");
-                        });
-                    } 
-                    const fotoEttore3 = document.getElementById("fotoEttore3");
-                    if (fotoEttore3) {
-                        fotoEttore3.addEventListener("click", function() {
-                            openImageModal("biglietto.png", "Bigliettino trovato sul tavolo nella stanza di Ettore");
-                        });
-                    }
-                } else if (searchTerm === 'ettorererere') {
-                    searchResults.innerHTML = `
-                        <h2>Risultati della ricerca: "ettore"</h2>
-
-                        <div class="report-section">
-                            <h3>ARCHIVIO - CASO Ettore Scala</h3>
-                            <p><span class="highlight">Agente incaricato:</span> Ines Cabral</p>
-                            <p><span class="highlight">Data:</span> 1 novembre 2025</p>
-                        </div>
-
-                        <div class="media-section">
-                            <h3>Materiale Fotografico</h3>
-                            <div class="media-content">
-                                <img id="fotoEttore" src="CCTV/sitopolizia.png" alt="Foto stanza" style="width:70%; max-width:400px; display:block; margin:0 auto 15px; border-radius:4px; cursor: zoom-in;">
-                                <p style="text-align:center; color:#ccc;">Scatto all'interno della stanza di Ettore nel Monastero di San Andro Pertiños.</p>
-                                <img id="fotoEttore3" src="biglietto.png" alt="Biglietto" style="width:70%; max-width:400px; display:block; margin:20px auto 15px; border-radius:4px; cursor: zoom-in;">
-                                <p style="text-align:center; color:#ccc;">Bigliettino trovato sul tavolo nella stanza di Ettore.</p>
-                            </div>
-                        </div>
-                    `;
-                    
-                    const fotoEttore = document.getElementById("fotoEttore");
-                    if (fotoEttore) {
-                        fotoEttore.addEventListener("click", function() {
-                            openImageModal("CCTV/sitopolizia.png", "Stanza di Ettore nel monastero");
-                        });
-                    } 
-                    const fotoEttore3 = document.getElementById("fotoEttore3");
-                    if (fotoEttore3) {
-                        fotoEttore3.addEventListener("click", function() {
-                            openImageModal("biglietto.png", "Bigliettino trovato sul tavolo nella stanza di Ettore");
-                        });
-                    }
-                } else if (searchTerm === 'ettorererere scala') {
-                    searchResults.innerHTML = `
+                } else if (searchTerm === 'ettore scala') {
+                    if (!isStep2Unlocked()) {
+                        searchResults.innerHTML = `
                         <h2>Risultati della ricerca: "ettore scala"</h2>
 
                         <div class="report-section">
@@ -1363,22 +1447,24 @@
                                 <p style="text-align:center; color:#ccc;">Bigliettino trovato sul tavolo nella stanza di Ettore.</p>
                             </div>
                         </div>
-                    `;
-                    
-                    const fotoEttore = document.getElementById("fotoEttore");
-                    if (fotoEttore) {
-                        fotoEttore.addEventListener("click", function() {
-                            openImageModal("CCTV/sitopolizia.png", "Stanza di Ettore nel monastero");
-                        });
-                    } 
-                    const fotoEttore3 = document.getElementById("fotoEttore3");
-                    if (fotoEttore3) {
-                        fotoEttore3.addEventListener("click", function() {
-                            openImageModal("biglietto.png", "Bigliettino trovato sul tavolo nella stanza di Ettore");
-                        });
-                    }
-                } else if (searchTerm === 'ettore scala') {
-                    searchResults.innerHTML = `
+                        `;
+
+                        const fotoEttore = document.getElementById("fotoEttore");
+                        if (fotoEttore) {
+                            fotoEttore.addEventListener("click", function() {
+                                openImageModal("CCTV/sitopolizia.png", "Stanza di Ettore nel monastero");
+                            });
+                        } 
+                        const fotoEttore3 = document.getElementById("fotoEttore3");
+                        if (fotoEttore3) {
+                            fotoEttore3.addEventListener("click", function() {
+                                openImageModal("biglietto.png", "Bigliettino trovato sul tavolo nella stanza di Ettore");
+                            });
+                        }
+
+                    // STEP 2: dopo 45 minuti → versione completa con interrogatori + referto
+                    } else {
+                        searchResults.innerHTML = `
                         <h2>Risultati della ricerca: "ettore scala"</h2>
 
                         <div class="report-section">
@@ -1411,117 +1497,123 @@
 
                             </div>
                         </div>
-                    `;
+                        `;
 
-                    // Crea trascrizioni diverse per ciascun fascicolo
-                    const interrogations = {
-                        luca: `
-                            <h3>Interrogatorio - Luca Piantagrane</h3>
-                            <p><span class="highlight">Registrazione 22:44 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
-                            <p><strong>Ispettore:</strong> Nome e cognome?</p>
-                            <p><strong>Luca:</strong> Luca Piantagrane.</p>
-                            <p><strong>Ispettore:</strong> Può dirmi che rapporto aveva con Ettore Scala?</p>
-                            <p><strong>Luca:</strong> Lo conoscevo da anni. Eravamo soci, amici… finchè non ha deciso di mollare tutto. Avevamo un progetto grosso assieme. Poi lui se n’è andato, così, da un giorno all’altro, per diventare prete.</p>
-                            <p><strong>Ispettore:</strong> Come l’ha presa?</p>
-                            <p><strong>Luca:</strong> Come vuole che l’abbia presa? Io ci avevo messo tutto, soldi, tempo, contatti. E lui mi ha rovinato. Ma non ero qui per questo, se è quello che pensa.</p>
-                            <p><strong>Ispettore:</strong> Allora perché ha accettato l’invito alla cena?</p>
-                            <p><strong>Luca:</strong> Per curiosità, forse per orgoglio. Aveva detto che voleva chiudere i conti con il passato, chiedere perdono. Beh, magari parte di me voleva sentirlo dire di persona.</p>
-                            <p><strong>Ispettore:</strong> Si direbbe scosso.</p>
-                            <p><strong>Luca:</strong> Sì, lo sono. Non lo odiavo, se è questo che vuole sapere. Era un idiota pieno di rimorsi, non un nemico… Però, glielo dico sinceramente, non piango per lui. Ha sempre pensato di poter scappare dalle sue responsabilità. Adesso… beh, non ci riuscirà più.</p>
-                            <p><strong>Ispettore:</strong> Le sue dichiarazioni sono sospette, cosa vuole lasciare intendere?</p>
-                            <p><strong>Luca:</strong> Cosa voglio lasciare intendere?! Ma per carità, non scherziamo… Ho studiato farmacia, è chiaro che ha avuto un malore, che cosa c'entro io? Non avete nulla contro di me, lasciatemi andare!</p>
-                            <p><strong>Ispettore:</strong> In realtà nella sua stanza abbiamo trovato una scatola piena di Carotiñobur, farmaco che potrebbe essere legato alla morte di Ettore. Una boccetta era mancante. Sa dirci qualcosa a riguardo?</p>
-                            <p><strong>Luca:</strong> Si, vorrei denunciare un furto. Quel farmaco è la mia ultima scoperta, l’avevo portato qui, forse ingenuamente, per convincere Ettore a tornare a lavorare assieme. Dovete credermi, è miracoloso, poteva essere l’occasione di tirare su i bilanci. Ma qualcuno è entrato nella mia stanza e l’ha rubato. Non capisco come sia possibile, mi hanno assicurato che sono l’unico ad avere una copia delle chiavi della stanza degli ospiti oltre a Padre Xamiel.</p>
-                        `,
-                        gordon: `
-                            <h3>Interrogatorio - Gordon Chico Cayada</h3>
-                            <p><span class="highlight">Registrazione 22:56 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
-                            <p><strong>Ispettore:</strong> Nome e cognome?</p>
-                            <p><strong>Gordon:</strong> Gordon Cayada.</p>
-                            <p><strong>Ispettore:</strong> Da quanto conosceva Ettore Scala?</p>
-                            <p><strong>Gordon:</strong> Dal 2012. Allora era uno studente italiano in Erasmus. Eravamo molto amici, al tempo…</p>
-                            <p><strong>Ispettore:</strong> Siete rimasti in contatto da allora?</p>
-                            <p><strong>Gordon:</strong> Non esattamente. C’è stato un episodio, una notte, quella in cui mia sorella è sparita. Lui è stato uno degli ultimi ad averla vista viva. Ha sempre negato un coinvolgimento, ma sono sicuro che almeno una parte della colpa ce l’avesse. Da allora non abbiamo più la stessa amicizia, la stessa vita di prima.</p>
-                            <p><strong>Ispettore:</strong> Quindi lo odiava.</p>
-                            <p><strong>Gordon:</strong> Sì. Per anni ammetto di averlo odiato, gli ho anche mandato una lettera in cui gli ho detto tutto ciò che pensavo di lui. Poi però… ho smesso. La rabbia non serve a niente. Quando mi ha invitato a questa cena, pensavo volesse chiedermi scusa, e alla fine ho accettato. Volevo capire se fosse davvero cambiato.</p>
-                            <p><strong>Ispettore:</strong> Come si sente adesso?</p>
-                            <p><strong>Gordon:</strong> Non lo so. Vuoto. È morto l’unico che poteva dirmi la verità su mia sorella. E la cosa peggiore è che… una parte di me pensava che questa sera fosse l’occasione per chiudere tutto. Per fare pace. Ma sembra che con Ettore le cose finiscano sempre nel modo sbagliato.</p>
-                        `,
-                        ezequiel: `
-                            <h3>Interrogatorio - Ezequiel Torres</h3>
-                            <p><span class="highlight">Registrazione 22:34 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
-                            <p><strong>Ispettore:</strong> Nome e cognome, per favore.</p>
-                            <p><strong>E. Torres:</strong> Ezequiel Torres, signore.</p>
-                            <p><strong>Ispettore:</strong> Conosceva la vittima?</p>
-                            <p><strong>E. Torres:</strong> Sì, sì, il seminarista… Ettore. Lo conoscevo. Parlava sempre con tutti, ma pure troppo. Io gli dicevo sempre: “Meglio non ficcare il naso dove non serve”. A molte persone qui gli impiccioni non piacciono.</p>
-                            <p><strong>Ispettore:</strong> Come mai era presente alla cena?</p>
-                            <p><strong>E. Torres:</strong> Ettore era così, aveva un cuore grande. Aveva invitato tutte le persone che passavano dal monastero, per tanto o per poco tempo. Mi aveva chiesto di aiutarlo ad aprire i tavoli, ed è buffo perchè ci siamo conosciuti proprio così, perchè lui mi aveva chiesto aiuto per una qualche questione in giardino che ormai non ricordo neanche più.</p>
-                            <p><strong>Ispettore:</strong> Qualcuno è entrato nella stanza di Ettore questa sera. Lei è il custode, aveva accesso a tutte le stanze? Ha notato un mazzo di chiavi sparire di recente?</p>
-                            <p><strong>E. Torres:</strong> Ho un mazzo di chiavi, sì, ma non ho accesso alle stanze private, quelle le tengono i padri. Io apro solo dove serve, e richiudo sempre. Non voglio guai.</p>
-                            <p><strong>Ispettore:</strong> Secondo lei, chi avrebbe potuto volere la morte di Ettore?</p>
-                            <p><strong>E. Torres:</strong> Ma quindi siete sicuri che è stato ammazzato? Pensavo a un infarto, con tutti i pensieri che aveva per la testa quel ragazzo. Non lo so, ma chi è stato sicuro è un uomo che ne capisce di medicina se è riuscito a farlo sembrare così naturale.</p>
-                            <p><strong>Ispettore:</strong> Ha qualcosa da aggiungere?</p>
-                            <p><strong>E. Torres:</strong> Solo questo: state attenti, voi della polizia. Qui la notte non è come fuori. Ci sono persone che tengono molto ai propri segreti… e certe porte, una volta aperte, non si richiudono più.</p>
-                        `,
-                        lucia: `
-                            <h3>Interrogatorio - Suor Lucia D'Hombres</h3>
-                            <p><span class="highlight">Registrazione 23:07 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
-                            <p><strong>Ispettore:</strong> Nome e cognome, per favore.</p>
-                            <p><strong>Suor Lucia:</strong> Chi io?</p>
-                            <p><strong>Ispettore:</strong> Si, nome e cognome.</p>
-                            <p><strong>Suor Lucia:</strong> Lucia D’Hombres.</p>
-                            <p><strong>Ispettore:</strong> Da quanto tempo vive nel monastero?</p>
-                            <p><strong>Suor Lucia:</strong> Tempo? Passa così lento. Isabel era appena andata via. Ninna nanna ninna oh questa bimba a chi la do?</p>
-                            <p><strong>Ispettore:</strong> Conosceva bene Ettore Scala?</p>
-                            <p><strong>Suor Lucia:</strong> In Biblioteca? (fissa il vuoto) Ha riportato gli ultimi libri?</p>
-                            <p><strong>Ispettore:</strong> Dov’era durante la cena?</p>
-                            <p><strong>Suor Lucia:</strong> Padre Xamiel non mi ha ancora dato le caramelle gialle. Volete un muffin?</p>
-                            <p><strong>Ispettore:</strong> Guardi la questione è seria – Ha visto qualcosa di insolito?</p>
-                            <p><strong>Suor Lucia:</strong> (fa una pausa lunga) C’era… una ragazza. In fondo al corridoio. Con i piedi scalzi. Nessuno la guardava, ma lei mi ha sorriso. Mi ha detto: “Non dire nulla, mamma, non ancora.”</p>
-                            <p><strong>Ispettore:</strong> Signora, le telecamere non hanno registrato nessun movimento insolito, non c’era nessuno nel monastero.</p>
-                            <p><strong>Suor Lucia:</strong> Il Signore perdona anche i silenzi?</p>
-                        `,
-                        xamiel: `
-                            <h3>Interrogatorio - Padre Xamiel</h3>
-                            <p><span class="highlight">Registrazione 23:22 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
-                            <p><strong>Ispettore:</strong> Nome e cognome?</p>
-                            <p><strong>Padre Xamiel:</strong> Padre Xamiel Ortega. Rettore del Monastero di San Andro Pertiños.</p>
-                            <p><strong>Ispettore:</strong> Lei era il superiore di Ettore Scala?</p>
-                            <p><strong>Padre Xamiel:</strong> Sì. Era sotto la mia guida spirituale. Un giovane brillante, promettente. La sua prematura scomparsa è davvero una tragedia.</p>
-                            <p><strong>Ispettore:</strong> Lei dov’era al momento della morte?</p>
-                            <p><strong>Padre Xamiel:</strong> A capotavola, naturalmente. Ero ospite e padrone di casa. Ho visto Ettore alzarsi per fare una chiamata. Poi è caduto. È stato un tragico malore, nient’altro.</p>
-                            <p><strong>Ispettore:</strong> Non ritiene che ci siano elementi sospetti?</p>
-                            <p><strong>Padre Xamiel:</strong> Ritengo che ci sia già abbastanza scandalo senza bisogno di aggiungerne altro. Il monastero è un luogo sacro, non un circo mediatico. Vi invito a trattare l’accaduto con la dovuta discrezione.</p>
-                            <p><strong>Ispettore:</strong> Quindi ci chiede di non indagare?</p>
-                            <p><strong>Padre Xamiel:</strong> Non rigirate le mie parole. Vi chiedo di rispettare i confini. In passato siete stati abbastanza bravi ad abbandonare le indagini, non credo sarà difficile farlo anche stavolta. Non c’è nulla da scoprire. Le vostre domande rischiano di macchiare irreversibilmente l'immagine di questo monastero.</p>
-                            <p><strong>Ispettore:</strong> Ha qualcosa da aggiungere?</p>
-                            <p><strong>Padre Xamiel:</strong> Sì. Vi consiglio di concludere presto le vostre indagini. La nostra istituzione è già abbastanza detestata. Alcune verità non servono a nessuno, soprattutto se a pagarne il prezzo è la fede del popolo.</p>
-                        `
-                    };
+                        // Trascrizioni interrogatori (copiate dal tuo codice)
+                        const interrogations = {
+                            luca: `
+                                <h3>Interrogatorio - Luca Piantagrane</h3>
+                                <p><span class="highlight">Registrazione 22:44 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
+                                <p><strong>Ispettore:</strong> Nome e cognome?</p>
+                                <p><strong>Luca:</strong> Luca Piantagrane.</p>
+                                <p><strong>Ispettore:</strong> Può dirmi che rapporto aveva con Ettore Scala?</p>
+                                <p><strong>Luca:</strong> Lo conoscevo da anni. Eravamo soci, amici… finchè non ha deciso di mollare tutto. Avevamo un progetto grosso assieme. Poi lui se n’è andato, così, da un giorno all’altro, per diventare prete.</p>
+                                <p><strong>Ispettore:</strong> Come l’ha presa?</p>
+                                <p><strong>Luca:</strong> Come vuole che l’abbia presa? Io ci avevo messo tutto, soldi, tempo, contatti. E lui mi ha rovinato. Ma non ero qui per questo, se è quello che pensa.</p>
+                                <p><strong>Ispettore:</strong> Allora perché ha accettato l’invito alla cena?</p>
+                                <p><strong>Luca:</strong> Per curiosità, forse per orgoglio. Aveva detto che voleva chiudere i conti con il passato, chiedere perdono. Beh, magari parte di me voleva sentirlo dire di persona.</p>
+                                <p><strong>Ispettore:</strong> Si direbbe scosso.</p>
+                                <p><strong>Luca:</strong> Sì, lo sono. Non lo odiavo, se è questo che vuole sapere. Era un idiota pieno di rimorsi, non un nemico… Però, glielo dico sinceramente, non piango per lui. Ha sempre pensato di poter scappare dalle sue responsabilità. Adesso… beh, non ci riuscirà più.</p>
+                                <p><strong>Ispettore:</strong> Le sue dichiarazioni sono sospette, cosa vuole lasciare intendere?</p>
+                                <p><strong>Luca:</strong> Cosa voglio lasciare intendere?! Ma per carità, non scherziamo… Ho studiato farmacia, è chiaro che ha avuto un malore, che cosa c'entro io? Non avete nulla contro di me, lasciatemi andare!</p>
+                                <p><strong>Ispettore:</strong> In realtà nella sua stanza abbiamo trovato una scatola piena di Carotiñobur, farmaco che potrebbe essere legato alla morte di Ettore. Una boccetta era mancante. Sa dirci qualcosa a riguardo?</p>
+                                <p><strong>Luca:</strong> Si, vorrei denunciare un furto. Quel farmaco è la mia ultima scoperta, l’avevo portato qui, forse ingenuamente, per convincere Ettore a tornare a lavorare assieme. Dovete credermi, è miracoloso, poteva essere l’occasione di tirare su i bilanci. Ma qualcuno è entrato nella mia stanza e l’ha rubato. Non capisco come sia possibile, mi hanno assicurato che sono l’unico ad avere una copia delle chiavi della stanza degli ospiti oltre a Padre Xamiel.</p>
+                            `,
+                            gordon: `
+                                <h3>Interrogatorio - Gordon Chico Cayada</h3>
+                                <p><span class="highlight">Registrazione 22:56 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
+                                <p><strong>Ispettore:</strong> Nome e cognome?</p>
+                                <p><strong>Gordon:</strong> Gordon Cayada.</p>
+                                <p><strong>Ispettore:</strong> Da quanto conosceva Ettore Scala?</p>
+                                <p><strong>Gordon:</strong> Dal 2012. Allora era uno studente italiano in Erasmus. Eravamo molto amici, al tempo…</p>
+                                <p><strong>Ispettore:</strong> Siete rimasti in contatto da allora?</p>
+                                <p><strong>Gordon:</strong> Non esattamente. C’è stato un episodio, una notte, quella in cui mia sorella è sparita. Lui è stato uno degli ultimi ad averla vista viva. Ha sempre negato un coinvolgimento, ma sono sicuro che almeno una parte della colpa ce l’avesse. Da allora non abbiamo più la stessa amicizia, la stessa vita di prima.</p>
+                                <p><strong>Ispettore:</strong> Quindi lo odiava.</p>
+                                <p><strong>Gordon:</strong> Sì. Per anni ammetto di averlo odiato, gli ho anche mandato una lettera in cui gli ho detto tutto ciò che pensavo di lui. Poi però… ho smesso. La rabbia non serve a niente. Quando mi ha invitato a questa cena, pensavo volesse chiedermi scusa, e alla fine ho accettato. Volevo capire se fosse davvero cambiato.</p>
+                                <p><strong>Ispettore:</strong> Come si sente adesso?</p>
+                                <p><strong>Gordon:</strong> Non lo so. Vuoto. È morto l’unico che poteva dirmi la verità su mia sorella. E la cosa peggiore è che… una parte di me pensava che questa sera fosse l’occasione per chiudere tutto. Per fare pace. Ma sembra che con Ettore le cose finiscano sempre nel modo sbagliato.</p>
+                            `,
+                            ezequiel: `
+                                <h3>Interrogatorio - Ezequiel Torres</h3>
+                                <p><span class="highlight">Registrazione 22:34 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
+                                <p><strong>Ispettore:</strong> Nome e cognome, per favore.</p>
+                                <p><strong>E. Torres:</strong> Ezequiel Torres, signore.</p>
+                                <p><strong>Ispettore:</strong> Conosceva la vittima?</p>
+                                <p><strong>E. Torres:</strong> Sì, sì, il seminarista… Ettore. Lo conoscevo. Parlava sempre con tutti, ma pure troppo. Io gli dicevo sempre: “Meglio non ficcare il naso dove non serve”. A molte persone qui gli impiccioni non piacciono.</p>
+                                <p><strong>Ispettore:</strong> Come mai era presente alla cena?</p>
+                                <p><strong>E. Torres:</strong> Ettore era così, aveva un cuore grande. Aveva invitato tutte le persone che passavano dal monastero, per tanto o per poco tempo. Mi aveva chiesto di aiutarlo ad aprire i tavoli, ed è buffo perchè ci siamo conosciuti proprio così, perchè lui mi aveva chiesto aiuto per una qualche questione in giardino che ormai non ricordo neanche più.</p>
+                                <p><strong>Ispettore:</strong> Qualcuno è entrato nella stanza di Ettore questa sera. Lei è il custode, aveva accesso a tutte le stanze? Ha notato un mazzo di chiavi sparire di recente?</p>
+                                <p><strong>E. Torres:</strong> Ho un mazzo di chiavi, sì, ma non ho accesso alle stanze private, quelle le tengono i padri. Io apro solo dove serve, e richiudo sempre. Non voglio guai.</p>
+                                <p><strong>Ispettore:</strong> Secondo lei, chi avrebbe potuto volere la morte di Ettore?</p>
+                                <p><strong>E. Torres:</strong> Ma quindi siete sicuri che è stato ammazzato? Pensavo a un infarto, con tutti i pensieri che aveva per la testa quel ragazzo. Non lo so, ma chi è stato sicuro è un uomo che ne capisce di medicina se è riuscito a farlo sembrare così naturale.</p>
+                                <p><strong>Ispettore:</strong> Ha qualcosa da aggiungere?</p>
+                                <p><strong>E. Torres:</strong> Solo questo: state attenti, voi della polizia. Qui la notte non è come fuori. Ci sono persone che tengono molto ai propri segreti… e certe porte, una volta aperte, non si richiudono più.</p>
+                            `,
+                            lucia: `
+                                <h3>Interrogatorio - Suor Lucia D'Hombres</h3>
+                                <p><span class="highlight">Registrazione 23:07 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
+                                <p><strong>Ispettore:</strong> Nome e cognome, per favore.</p>
+                                <p><strong>Suor Lucia:</strong> Chi io?</p>
+                                <p><strong>Ispettore:</strong> Si, nome e cognome.</p>
+                                <p><strong>Suor Lucia:</strong> Lucia D’Hombres.</p>
+                                <p><strong>Ispettore:</strong> Da quanto tempo vive nel monastero?</p>
+                                <p><strong>Suor Lucia:</strong> Tempo? Passa così lento. Isabel era appena andata via. Ninna nanna ninna oh questa bimba a chi la do?</p>
+                                <p><strong>Ispettore:</strong> Conosceva bene Ettore Scala?</p>
+                                <p><strong>Suor Lucia:</strong> In Biblioteca? (fissa il vuoto) Ha riportato gli ultimi libri?</p>
+                                <p><strong>Ispettore:</strong> Dov’era durante la cena?</p>
+                                <p><strong>Suor Lucia:</strong> Padre Xamiel non mi ha ancora dato le caramelle gialle. Volete un muffin?</p>
+                                <p><strong>Ispettore:</strong> Guardi la questione è seria – Ha visto qualcosa di insolito?</p>
+                                <p><strong>Suor Lucia:</strong> (fa una pausa lunga) C’era… una ragazza. In fondo al corridoio. Con i piedi scalzi. Nessuno la guardava, ma lei mi ha sorriso. Mi ha detto: “Non dire nulla, mamma, non ancora.”</p>
+                                <p><strong>Ispettore:</strong> Signora, le telecamere non hanno registrato nessun movimento insolito, non c’era nessuno nel monastero.</p>
+                                <p><strong>Suor Lucia:</strong> Il Signore perdona anche i silenzi?</p>
+                            `,
+                            xamiel: `
+                                <h3>Interrogatorio - Padre Xamiel</h3>
+                                <p><span class="highlight">Registrazione 23:22 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
+                                <p><strong>Ispettore:</strong> Nome e cognome?</p>
+                                <p><strong>Padre Xamiel:</strong> Padre Xamiel Ortega. Rettore del Monastero di San Andro Pertiños.</p>
+                                <p><strong>Ispettore:</strong> Lei era il superiore di Ettore Scala?</p>
+                                <p><strong>Padre Xamiel:</strong> Sì. Era sotto la mia guida spirituale. Un giovane brillante, promettente. La sua prematura scomparsa è davvero una tragedia.</p>
+                                <p><strong>Ispettore:</strong> Lei dov’era al momento della morte?</p>
+                                <p><strong>Padre Xamiel:</strong> A capotavola, naturalmente. Ero ospite e padrone di casa. Ho visto Ettore alzarsi per fare una chiamata. Poi è caduto. È stato un tragico malore, nient’altro.</p>
+                                <p><strong>Ispettore:</strong> Non ritiene che ci siano elementi sospetti?</p>
+                                <p><strong>Padre Xamiel:</strong> Ritengo che ci sia già abbastanza scandalo senza bisogno di aggiungerne altro. Il monastero è un luogo sacro, non un circo mediatico. Vi invito a trattare l’accaduto con la dovuta discrezione.</p>
+                                <p><strong>Ispettore:</strong> Quindi ci chiede di non indagare?</p>
+                                <p><strong>Padre Xamiel:</strong> Non rigirate le mie parole. Vi chiedo di rispettare i confini. In passato siete stati abbastanza bravi ad abbandonare le indagini, non credo sarà difficile farlo anche stavolta. Non c’è nulla da scoprire. Le vostre domande rischiano di macchiare irreversibilmente l'immagine di questo monastero.</p>
+                                <p><strong>Ispettore:</strong> Ha qualcosa da aggiungere?</p>
+                                <p><strong>Padre Xamiel:</strong> Sì. Vi consiglio di concludere presto le vostre indagini. La nostra istituzione è già abbastanza detestata. Alcune verità non servono a nessuno, soprattutto se a pagarne il prezzo è la fede del popolo.</p>
+                            `
+                        };
 
-                    // Gestisci click sui fascicoli
-                    const folders = document.querySelectorAll('.interrogation-folder');
-                    const contentDiv = document.getElementById('interrogation-content');
+                        // Gestisci click sui fascicoli
+                        const folders = document.querySelectorAll('.interrogation-folder');
+                        const contentDiv = document.getElementById('interrogation-content');
 
-                    folders.forEach(folder => {
-                        folder.addEventListener('click', function() {
-                            const person = this.dataset.person;
-                            contentDiv.innerHTML = interrogations[person] || "<p>Nessuna trascrizione disponibile.</p>";
+                        folders.forEach(folder => {
+                            folder.addEventListener('click', function() {
+                                const person = this.dataset.person;
+                                contentDiv.innerHTML = interrogations[person] || "<p>Nessuna trascrizione disponibile.</p>";
+                            });
                         });
-                    });
-                    
-                    const fotoEttore = document.getElementById("fotoEttore");
-                    if (fotoEttore) {
-                        fotoEttore.addEventListener("click", function() {
-                            openImageModal("CCTV/sitopolizia.png", "Stanza di Ettore nel monastero");
-                        });
-                    }
-                    // Aggiunge lo zoom anche alla seconda foto
-                    const fotoEttore2 = document.getElementById("fotoEttore2");
-                    if (fotoEttore2) {
-                        fotoEttore2.addEventListener("click", function() {
-                            openImageModal("referto.jpeg", "Referto Ettore Scala");
-                        });
+                        
+                        const fotoEttore = document.getElementById("fotoEttore");
+                        if (fotoEttore) {
+                            fotoEttore.addEventListener("click", function() {
+                                openImageModal("CCTV/sitopolizia.png", "Stanza di Ettore nel monastero");
+                            });
+                        }
+                        const fotoEttore2 = document.getElementById("fotoEttore2");
+                        if (fotoEttore2) {
+                            fotoEttore2.addEventListener("click", function() {
+                                openImageModal("referto.jpeg", "Referto Ettore Scala");
+                            });
+                        } 
+                        const fotoEttore3 = document.getElementById("fotoEttore3");
+                        if (fotoEttore3) {
+                            fotoEttore3.addEventListener("click", function() {
+                                openImageModal("biglietto.png", "Bigliettino trovato sul tavolo nella stanza di Ettore");
+                            });
+                        }
                     }
                     
                 } else if (searchTerm !== '') {
