@@ -911,8 +911,13 @@
             // Sistema di ricerca
             searchBtn.addEventListener('click', function() {
                 const searchTerm = searchInput.value.trim().toLowerCase();
-                
-                if (searchTerm === 'alicia') {
+
+                if (searchTerm === "resetpolice") {
+                    localStorage.removeItem("police_game_start");
+                    alert("Timer resettato! La pagina verrà ricaricata.");
+                    location.reload();
+                    return;
+                } else if (searchTerm === 'alicia') {
                     searchResults.innerHTML = `
                         <h2>Risultati della ricerca: "alicia"</h2>
                         
