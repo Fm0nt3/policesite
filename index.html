@@ -205,7 +205,7 @@
             margin-top: 10px;
         }
 
-        /* Stili per la sezione Telecamere */
+        /* Telecamere */
         .cameras-section {
             background-color: #1a1a1a;
             border-radius: 8px;
@@ -503,9 +503,11 @@
                     <h3>Sblocco nuovi dati in:</h3>
                     <div id="countdownTimer">--:--</div>
                 </div>
+
                 <div id="unlockNotification" class="unlock-notification" style="display:none;">
                     Nuovi dati disponibili relativi alla morte di Ettore.
                 </div>
+
                 <div class="search-box">
                     <input type="text" id="searchInput" placeholder="Inserisci termine di ricerca...">
                     <button id="searchBtn">CERCA</button>
@@ -539,6 +541,7 @@
             <p>© 2025 Polizia Scientifica</p>
         </footer>
     </div>
+
     <div id="imageModal" class="modal" style="display:none;">
         <span class="close" id="closeModal">&times;</span>
         <img id="modalImg" class="modal-content">
@@ -547,6 +550,10 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+
+            /* =========================================
+               CONFIG TIMER & UTIL
+            ========================================== */
             const STEP2_DELAY_MINUTES = 45;
             const STEP2_DELAY_MS = STEP2_DELAY_MINUTES * 60 * 1000;
 
@@ -559,47 +566,9 @@
                 return parseInt(t);
             }
 
-            function minutesElapsed() {
-                const start = ensureGameStartTime();
-                return Math.floor((Date.now() - start) / 60000);
-            }
-
             function isStep2Unlocked() {
                 return (Date.now() - ensureGameStartTime()) >= STEP2_DELAY_MS;
             }
-
-            if (isStep2Unlocked()) {
-                // Nasconde il login e mostra direttamente il sito operativo
-                const loginPage = document.getElementById('loginPage');
-                const mainPage = document.getElementById('mainPage');
-                loginPage.style.display = 'none';
-                mainPage.style.display = 'block';
-            }
-            function updateCountdown() {
-                const start = ensureGameStartTime();
-                const now = Date.now();
-                const remaining = STEP2_DELAY_MS - (now - start);
-
-                const timerBox = document.getElementById("countdownTimer");
-
-                if (!timerBox) return;
-
-                if (remaining <= 0) {
-                    timerBox.textContent = "00:00";
-                    refreshPageAfterUnlock();
-                    return;
-                }
-
-                const minutes = Math.floor(remaining / 60000);
-                const seconds = Math.floor((remaining % 60000) / 1000);
-
-                timerBox.textContent = 
-                    minutes.toString().padStart(2, "0") + ":" +
-                    seconds.toString().padStart(2, "0");
-            }
-
-            setInterval(updateCountdown, 1000);
-            updateCountdown();
 
             let unlockedTriggered = false;
 
@@ -613,11 +582,44 @@
                     box.addEventListener("click", () => box.style.display = "none");
                 }
 
-                const input = document.getElementById("searchInput").value.trim().toLowerCase();
-                if (input === "ettore" || input === "ettore scala") {
+                const timerBox = document.getElementById("countdownBox");
+                if (timerBox) {
+                    timerBox.style.opacity = "0.5";
+                }
+
+                const inputValue = document.getElementById("searchInput")?.value.trim().toLowerCase();
+                if (inputValue === "ettore" || inputValue === "ettore scala") {
                     document.getElementById("searchBtn").click();
                 }
             }
+
+            function updateCountdown() {
+                const start = ensureGameStartTime();
+                const now = Date.now();
+                const remaining = STEP2_DELAY_MS - (now - start);
+                const timerBox = document.getElementById("countdownTimer");
+                if (!timerBox) return;
+
+                if (remaining <= 0) {
+                    timerBox.textContent = "00:00";
+                    refreshPageAfterUnlock();
+                    return;
+                }
+
+                const minutes = Math.floor(remaining / 60000);
+                const seconds = Math.floor((remaining % 60000) / 1000);
+
+                timerBox.textContent =
+                    minutes.toString().padStart(2, "0") + ":" +
+                    seconds.toString().padStart(2, "0");
+            }
+
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+
+            /* =========================================
+               RIFERIMENTI DOM
+            ========================================== */
             const loginBtn = document.getElementById('loginBtn');
             const errorMsg = document.getElementById('errorMsg');
             const loginPage = document.getElementById('loginPage');
@@ -628,286 +630,188 @@
             const yearFolders = document.querySelector('.year-folders');
             const monthFolders = document.querySelector('.month-folders');
             const cameraImages = document.getElementById('cameraImages');
+
+            /* =========================================
+               DATI TELECAMERE
+            ========================================== */
             const cameraDescriptions = {
                 2009: {
                     "Febbraio": [
-                        {
-                            image: "CCTV/CCTV1.jpeg",
-                            text: "Parcheggio Mc Donald's Nord - 23 - 17:32"
-                        },
-                        {
-                            image: "CCTV/CCTV43.jpeg",
-                            text: "Settore Ovest Stadio Abanca-Riazor - 28 - 12:24"
-                        },
+                        { image: "CCTV/CCTV1.jpeg",  text: "Parcheggio Mc Donald's Nord - 23 - 17:32" },
+                        { image: "CCTV/CCTV43.jpeg", text: "Settore Ovest Stadio Abanca-Riazor - 28 - 12:24" },
                     ],
                     "Marzo": [
-                        {
-                            image: "CCTV/CCTV15.jpeg",
-                            text: "Attracco visite turistiche - 03 - 10:46"
-                        },
-                        {
-                            image: "CCTV/CCTV44.jpeg",
-                            text: "Controllo tetto stazione polizia - 12 - 14:01"
-                        },
-                    ],"Maggio": [
-                        {
-                            image: "CCTV/CCTV28.jpeg",
-                            text: "Entrata sud scavi Monticaño - 10 - 16:33"
-                        },
-                        {
-                            image: "CCTV/CCTV19.jpeg",
-                            text: "Attracco nord-est porto - 21 - 13:12"
-                        },
-                    ],"Luglio": [
-                        {
-                            image: "CCTV/CCTV7.jpeg",
-                            text: "Via Albierto 2 - 15 - 17:56"
-                        },
-                        {
-                            image: "CCTV/CCTV5.jpeg",
-                            text: "Superstrada raccordo sud - 17 - 16:43"
-                        },
-                    ],"Agosto": [
-                        {
-                            image: "CCTV/CCTV35.jpeg",
-                            text: "Impianto sportivo Ruiz - 09 - 00:45"
-                        },
-                        {
-                            image: "CCTV/CCTV10.jpeg",
-                            text: "Plaza Mipita - 23 - 15:06"
-                        },
-                    ],"Ottobre": [
-                        {
-                            image: "CCTV/CCTV41.jpeg",
-                            text: "Ingresso est Chiesa Parua - 11 - 22:59"
-                        },
-                        {
-                            image: "CCTV/CCTV25.jpeg",
-                            text: "Gate 23 Aeroporto - 14 - 14:16"
-                        },
-                    ],"Novembre": [
-                        {
-                            image: "CCTV/CCTV17.jpeg",
-                            text: "Molo 3 - 04 - 10:34"
-                        },
-                        {
-                            image: "CCTV/CCTV45.jpeg",
-                            text: "Cortile interno università - 12 - 07:16"
-                        },
+                        { image: "CCTV/CCTV15.jpeg", text: "Attracco visite turistiche - 03 - 10:46" },
+                        { image: "CCTV/CCTV44.jpeg", text: "Controllo tetto stazione polizia - 12 - 14:01" },
+                    ],
+                    "Maggio": [
+                        { image: "CCTV/CCTV28.jpeg", text: "Entrata sud scavi Monticaño - 10 - 16:33" },
+                        { image: "CCTV/CCTV19.jpeg", text: "Attracco nord-est porto - 21 - 13:12" },
+                    ],
+                    "Luglio": [
+                        { image: "CCTV/CCTV7.jpeg", text: "Via Albierto 2 - 15 - 17:56" },
+                        { image: "CCTV/CCTV5.jpeg", text: "Superstrada raccordo sud - 17 - 16:43" },
+                    ],
+                    "Agosto": [
+                        { image: "CCTV/CCTV35.jpeg", text: "Impianto sportivo Ruiz - 09 - 00:45" },
+                        { image: "CCTV/CCTV10.jpeg", text: "Plaza Mipita - 23 - 15:06" },
+                    ],
+                    "Ottobre": [
+                        { image: "CCTV/CCTV41.jpeg", text: "Ingresso est Chiesa Parua - 11 - 22:59" },
+                        { image: "CCTV/CCTV25.jpeg", text: "Gate 23 Aeroporto - 14 - 14:16" },
+                    ],
+                    "Novembre": [
+                        { image: "CCTV/CCTV17.jpeg", text: "Molo 3 - 04 - 10:34" },
+                        { image: "CCTV/CCTV45.jpeg", text: "Cortile interno università - 12 - 07:16" },
                     ]
                 },
                 2012: {
                     "Febbraio": [
-                        {
-                            image: "CCTV/CCTV2.jpeg",
-                            text: "Parcheggio Corte Ingles - 09 - 16:32"
-                        },
+                        { image: "CCTV/CCTV2.jpeg", text: "Parcheggio Corte Ingles - 09 - 16:32" },
                     ],
                     "Marzo": [
-                        {
-                            image: "CCTV/CCTV39.jpeg",
-                            text: "Molo 2 porto commerciale - 15 - 05:48"
-                        },
-                    ],"Maggio": [
-                        {
-                            image: "CCTV/CCTVimportanteveramente.png",
-                            text: "Monastero di San Andro - 24 - 00:35"
-                        },
-                    ],"Luglio": [
-                        {
-                            image: "CCTV/CCTV13.jpeg",
-                            text: "Parcheggio porto - 10 - 22:46"
-                        },
-                    ],"Agosto": [
-                        {
-                            image: "CCTV/CCTV27.jpeg",
-                            text: "Rovine Monticaño - 24 - 14:56"
-                        },
-                    ],"Ottobre": [
-                        {
-                            image: "CCTV/CCTV18.jpeg",
-                            text: "Molo privato 3 - 15 - 13:27"
-                        },
-                    ],"Novembre": [
-                        {
-                            image: "CCTV/CCTV14.jpeg",
-                            text: "Porto commerciale zona carico - 30 - 16:11"
-                        },
+                        { image: "CCTV/CCTV39.jpeg", text: "Molo 2 porto commerciale - 15 - 05:48" },
+                    ],
+                    "Maggio": [
+                        { image: "CCTV/CCTVimportanteveramente.png", text: "Monastero di San Andro - 24 - 00:35" },
+                    ],
+                    "Luglio": [
+                        { image: "CCTV/CCTV13.jpeg", text: "Parcheggio porto - 10 - 22:46" },
+                    ],
+                    "Agosto": [
+                        { image: "CCTV/CCTV27.jpeg", text: "Rovine Monticaño - 24 - 14:56" },
+                    ],
+                    "Ottobre": [
+                        { image: "CCTV/CCTV18.jpeg", text: "Molo privato 3 - 15 - 13:27" },
+                    ],
+                    "Novembre": [
+                        { image: "CCTV/CCTV14.jpeg", text: "Porto commerciale zona carico - 30 - 16:11" },
                     ]
                 },
                 2015: {
                     "Febbraio": [
-                        {
-                            image: "CCTV/CCTV29.jpeg",
-                            text: "Rovine romane Monticaño - 07 - 12:06"
-                        },
+                        { image: "CCTV/CCTV29.jpeg", text: "Rovine romane Monticaño - 07 - 12:06" },
                     ],
                     "Marzo": [
-                        {
-                            image: "CCTV/CCTV37.jpeg",
-                            text: "Molo 6 - 18 - 02:19"
-                        },
-                    ],"Maggio": [
-                        {
-                            image: "CCTV/CCTV12.jpeg",
-                            text: "Parco Tariquo - 25 - 00:24"
-                        },
-                    ],"Luglio": [
-                        {
-                            image: "CCTV/CCTV34.jpeg",
-                            text: "Scavi Nord-Est - 29 - 03:45"
-                        },
-                    ],"Agosto": [
-                        {
-                            image: "CCTV/CCTV21.jpeg",
-                            text: "Lungomare Lucio - 16 - 15:07"
-                        },
-                    ],"Ottobre": [
-                        {
-                            image: "CCTV/CCTV40.jpeg",
-                            text: "Piazza Ruveira - 05 - 01:13"
-                        },
-                    ],"Novembre": [
-                        {
-                            image: "CCTV/CCTV31.jpeg",
-                            text: "Rovine romane Monticaño - 19 - 16:54"
-                        },
+                        { image: "CCTV/CCTV37.jpeg", text: "Molo 6 - 18 - 02:19" },
+                    ],
+                    "Maggio": [
+                        { image: "CCTV/CCTV12.jpeg", text: "Parco Tariquo - 25 - 00:24" },
+                    ],
+                    "Luglio": [
+                        { image: "CCTV/CCTV34.jpeg", text: "Scavi Nord-Est - 29 - 03:45" },
+                    ],
+                    "Agosto": [
+                        { image: "CCTV/CCTV21.jpeg", text: "Lungomare Lucio - 16 - 15:07" },
+                    ],
+                    "Ottobre": [
+                        { image: "CCTV/CCTV40.jpeg", text: "Piazza Ruveira - 05 - 01:13" },
+                    ],
+                    "Novembre": [
+                        { image: "CCTV/CCTV31.jpeg", text: "Rovine romane Monticaño - 19 - 16:54" },
                     ]
-                },2018: {
+                },
+                2018: {
                     "Febbraio": [
-                        {
-                            image: "CCTV/CCTV3.jpeg",
-                            text: "Via Central - 02 - 13:42"
-                        },
+                        { image: "CCTV/CCTV3.jpeg", text: "Via Central - 02 - 13:42" },
                     ],
                     "Marzo": [
-                        {
-                            image: "CCTV/CCTV32.jpeg",
-                            text: "Settore sud scavi - 14 - 00:54"
-                        },
-                    ],"Maggio": [
-                        {
-                            image: "CCTV/CCTV26.jpeg",
-                            text: "Zona Imbarco 4 - 06 - 15:21"
-                        },
-                    ],"Luglio": [
-                        {
-                            image: "CCTV/CCTV9.jpeg",
-                            text: "Via Callata - 28 - 17:01"
-                        },
-                    ],"Agosto": [
-                        {
-                            image: "CCTV/CCTV46.jpeg",
-                            text: "Zona universitaria - 29 - 11:43"
-                        },
-                    ],"Ottobre": [
-                        {
-                            image: "CCTV/CCTV33.jpeg",
-                            text: "Rovine romane Monticaño - 21 - 04:14"
-                        },
-                    ],"Novembre": [
-                        {
-                            image: "CCTV/CCTV6.jpeg",
-                            text: "Superstrada Rite - 16:57"
-                        },
+                        { image: "CCTV/CCTV32.jpeg", text: "Settore sud scavi - 14 - 00:54" },
+                    ],
+                    "Maggio": [
+                        { image: "CCTV/CCTV26.jpeg", text: "Zona Imbarco 4 - 06 - 15:21" },
+                    ],
+                    "Luglio": [
+                        { image: "CCTV/CCTV9.jpeg", text: "Via Callata - 28 - 17:01" },
+                    ],
+                    "Agosto": [
+                        { image: "CCTV/CCTV46.jpeg", text: "Zona universitaria - 29 - 11:43" },
+                    ],
+                    "Ottobre": [
+                        { image: "CCTV/CCTV33.jpeg", text: "Rovine romane Monticaño - 21 - 04:14" },
+                    ],
+                    "Novembre": [
+                        { image: "CCTV/CCTV6.jpeg", text: "Superstrada Rite - 16:57" },
                     ]
-                },2021: {
+                },
+                2021: {
                     "Febbraio": [
-                        {
-                            image: "CCTV/CCTV24.jpeg",
-                            text: "Parcheggio Corte Ingles - 12:41"
-                        },
+                        { image: "CCTV/CCTV24.jpeg", text: "Parcheggio Corte Ingles - 12:41" },
                     ],
                     "Marzo": [
-                        {
-                            image: "CCTV/CCTV30.jpeg",
-                            text: "Scavi Est - 08 - 15:37"
-                        },
-                    ],"Maggio": [
-                        {
-                            image: "CCTV/CCTV20.jpeg",
-                            text: "Magazzino 5 porto - 29 - 16:55"
-                        },
-                    ],"Luglio": [
-                        {
-                            image: "CCTV/CCTV38.jpeg",
-                            text: "Porto commerciale - 21 - 03:21"
-                        },
-                    ],"Agosto": [
-                        {
-                            image: "CCTV/CCTV16.jpeg",
-                            text: "Molo 4 - 30 - 18:00"
-                        },
-                    ],"Ottobre": [
-                        {
-                            image: "CCTV/CCTV8.jpeg",
-                            text: "Via Francisco - 11 - 20:56"
-                        },
-                    ],"Novembre": [
-                        {
-                            image: "CCTV/CCTV42.jpeg",
-                            text: "Plaza Ventura - 26 - 22:15"
-                        },
+                        { image: "CCTV/CCTV30.jpeg", text: "Scavi Est - 08 - 15:37" },
+                    ],
+                    "Maggio": [
+                        { image: "CCTV/CCTV20.jpeg", text: "Magazzino 5 porto - 29 - 16:55" },
+                    ],
+                    "Luglio": [
+                        { image: "CCTV/CCTV38.jpeg", text: "Porto commerciale - 21 - 03:21" },
+                    ],
+                    "Agosto": [
+                        { image: "CCTV/CCTV16.jpeg", text: "Molo 4 - 30 - 18:00" },
+                    ],
+                    "Ottobre": [
+                        { image: "CCTV/CCTV8.jpeg", text: "Via Francisco - 11 - 20:56" },
+                    ],
+                    "Novembre": [
+                        { image: "CCTV/CCTV42.jpeg", text: "Plaza Ventura - 26 - 22:15" },
                     ]
-                },2024: {
+                },
+                2024: {
                     "Febbraio": [
-                        {
-                            image: "CCTV/CCTV11.jpeg",
-                            text: "Centro storico - 27 - 23:18"
-                        },
+                        { image: "CCTV/CCTV11.jpeg", text: "Centro storico - 27 - 23:18" },
                     ],
                     "Marzo": [
-                        {
-                            image: "CCTV/CCTV22.jpeg",
-                            text: "Porto turistico - 04 - 12:10"
-                        },
-                    ],"Maggio": [
-                        {
-                            image: "CCTV/CCTV48.jpeg",
-                            text: "Università retro - 25 - 17:43"
-                        },
-                    ],"Luglio": [
-                        {
-                            image: "CCTV/CCTV36.jpeg",
-                            text: "Entrata merci 32 - 09 - 00:15"
-                        },
-                    ],"Agosto": [
-                        {
-                            image: "CCTV/CCTV23.jpeg",
-                            text: "Gate 21 aeroporto - 28 - 17:04"
-                        },
-                    ],"Ottobre": [
-                        {
-                            image: "CCTV/CCTV4.jpeg",
-                            text: "Via Gorda - 16 - 16:29"
-                        },
-                    ],"Novembre": [
-                        {
-                            image: "CCTV/CCTV47.jpeg",
-                            text: "Centro sportivo Serces - 22 - 17:03"
-                        },
+                        { image: "CCTV/CCTV22.jpeg", text: "Porto turistico - 04 - 12:10" },
+                    ],
+                    "Maggio": [
+                        { image: "CCTV/CCTV48.jpeg", text: "Università retro - 25 - 17:43" },
+                    ],
+                    "Luglio": [
+                        { image: "CCTV/CCTV36.jpeg", text: "Entrata merci 32 - 09 - 00:15" },
+                    ],
+                    "Agosto": [
+                        { image: "CCTV/CCTV23.jpeg", text: "Gate 21 aeroporto - 28 - 17:04" },
+                    ],
+                    "Ottobre": [
+                        { image: "CCTV/CCTV4.jpeg", text: "Via Gorda - 16 - 16:29" },
+                    ],
+                    "Novembre": [
+                        { image: "CCTV/CCTV47.jpeg", text: "Centro sportivo Serces - 22 - 17:03" },
                     ]
                 },
             };
-            
-            // Funzione di login
+
+            /* =========================================
+               AUTO-SKIP LOGIN SE GIA' SBLOCCATO
+            ========================================== */
+            if (isStep2Unlocked()) {
+                loginPage.style.display = 'none';
+                mainPage.style.display = 'block';
+                generateYearFolders();
+            }
+
+            /* =========================================
+               LOGIN
+            ========================================== */
             let attempts = 0;
             loginBtn.addEventListener('click', function() {
                 const username = document.getElementById('username').value;
                 const password = document.getElementById('password').value;
+
+                // Se nel frattempo si è sbloccato, niente login
                 if (isStep2Unlocked()) {
                     loginPage.style.display = 'none';
                     mainPage.style.display = 'block';
+                    generateYearFolders();
                     return;
                 }
+
                 if (username === 'Ines Cabral' && password === 'santiago2021') {
-                    // Accesso consentito
                     loginPage.style.display = 'none';
                     mainPage.style.display = 'block';
-                    // Genera le cartelle degli anni
                     generateYearFolders();
                 } else {
-                    // Accesso negato
                     attempts++;
                     errorMsg.style.display = 'block';
                     document.getElementById('password').value = '';
@@ -928,15 +832,14 @@
                         loginPage.querySelector('.login-container').appendChild(hint);
                     }
                     
-                    // Shake animation per indicare errore
                     loginPage.style.animation = 'shake 0.5s';
                     setTimeout(() => {
                         loginPage.style.animation = '';
                     }, 500);
                 }
             });
-            
-            // Permetti l'accesso anche premendo Invio
+
+            // Invio = login (se login visibile) o cerca (se main attivo)
             document.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     if (loginPage.style.display !== 'none') {
@@ -946,11 +849,14 @@
                     }
                 }
             });
-            
-            // Sistema di ricerca
+
+            /* =========================================
+               SISTEMA DI RICERCA
+            ========================================== */
             searchBtn.addEventListener('click', function() {
                 const searchTerm = searchInput.value.trim().toLowerCase();
 
+                // Comandi speciali per te (host)
                 if (searchTerm === "resetpolice") {
                     localStorage.removeItem("police_game_start");
                     alert("Timer resettato! La pagina verrà ricaricata.");
@@ -959,11 +865,12 @@
                 } else if (searchTerm === "unlockettore") {
                     localStorage.setItem("police_game_start", (Date.now() - STEP2_DELAY_MS).toString());
                     alert("Dati su Ettore sbloccati immediatamente!");
-
-                    // aggiorna la pagina come se il timer fosse finito
                     refreshPageAfterUnlock();
                     return;
-                } else if (searchTerm === 'alicia') {
+                }
+
+                /* ---- CASI CLASSICI ---- */
+                if (searchTerm === 'alicia') {
                     searchResults.innerHTML = `
                         <h2>Risultati della ricerca: "alicia"</h2>
                         
@@ -1289,27 +1196,35 @@
                         
                         <span class="timestamp">Ultimo aggiornamento: 2 novembre 2024, ore 14:23</span>
                     `;
+                
+                /* =========================================
+                   BLOCCO ETTORE – STEP 1 / STEP 2
+                ========================================== */
+                } else if (searchTerm === 'ettore' || searchTerm === 'ettore scala') {
 
-                } else if (searchTerm === 'ettore') {
-                    if (!isStep2Unlocked()) {
+                    const isFull = isStep2Unlocked();
+
+                    if (!isFull) {
+                        // STEP 1 – solo materiale fotografico
+                        const label = (searchTerm === 'ettore') ? 'ettore' : 'ettore scala';
                         searchResults.innerHTML = `
-                        <h2>Risultati della ricerca: "ettore"</h2>
+                            <h2>Risultati della ricerca: "${label}"</h2>
 
-                        <div class="report-section">
-                            <h3>ARCHIVIO - CASO Ettore Scala</h3>
-                            <p><span class="highlight">Agente incaricato:</span> Ines Cabral</p>
-                            <p><span class="highlight">Data:</span> 1 novembre 2025</p>
-                        </div>
-
-                        <div class="media-section">
-                            <h3>Materiale Fotografico</h3>
-                            <div class="media-content">
-                                <img id="fotoEttore" src="CCTV/sitopolizia.png" alt="Foto stanza" style="width:70%; max-width:400px; display:block; margin:0 auto 15px; border-radius:4px; cursor: zoom-in;">
-                                <p style="text-align:center; color:#ccc;">Scatto all'interno della stanza di Ettore nel Monastero di San Andro Pertiños.</p>
-                                <img id="fotoEttore3" src="biglietto.png" alt="Biglietto" style="width:70%; max-width:400px; display:block; margin:20px auto 15px; border-radius:4px; cursor: zoom-in;">
-                                <p style="text-align:center; color:#ccc;">Bigliettino trovato sul tavolo nella stanza di Ettore.</p>
+                            <div class="report-section">
+                                <h3>ARCHIVIO - CASO Ettore Scala</h3>
+                                <p><span class="highlight">Agente incaricato:</span> Ines Cabral</p>
+                                <p><span class="highlight">Data:</span> 1 novembre 2025</p>
                             </div>
-                        </div>
+
+                            <div class="media-section">
+                                <h3>Materiale Fotografico</h3>
+                                <div class="media-content">
+                                    <img id="fotoEttore" src="CCTV/sitopolizia.png" alt="Foto stanza" style="width:70%; max-width:400px; display:block; margin:0 auto 15px; border-radius:4px; cursor: zoom-in;">
+                                    <p style="text-align:center; color:#ccc;">Scatto all'interno della stanza di Ettore nel Monastero di San Andro Pertiños.</p>
+                                    <img id="fotoEttore3" src="biglietto.png" alt="Biglietto" style="width:70%; max-width:400px; display:block; margin:20px auto 15px; border-radius:4px; cursor: zoom-in;">
+                                    <p style="text-align:center; color:#ccc;">Bigliettino trovato sul tavolo nella stanza di Ettore.</p>
+                                </div>
+                            </div>
                         `;
 
                         const fotoEttore = document.getElementById("fotoEttore");
@@ -1317,7 +1232,7 @@
                             fotoEttore.addEventListener("click", function() {
                                 openImageModal("CCTV/sitopolizia.png", "Stanza di Ettore nel monastero");
                             });
-                        } 
+                        }
                         const fotoEttore3 = document.getElementById("fotoEttore3");
                         if (fotoEttore3) {
                             fotoEttore3.addEventListener("click", function() {
@@ -1325,44 +1240,43 @@
                             });
                         }
 
-                    // STEP 2: dopo 45 minuti → versione completa con interrogatori + referto
                     } else {
+                        // STEP 2 – interrogatori + referto + foto
+                        const label = (searchTerm === 'ettore') ? 'ettore' : 'ettore scala';
+
                         searchResults.innerHTML = `
-                        <h2>Risultati della ricerca: "ettore"</h2>
+                            <h2>Risultati della ricerca: "${label}"</h2>
 
-                        <div class="report-section">
-                            <h3>ARCHIVIO INTERROGATORI - CASO Ettore Scala</h3>
-                            <p><span class="highlight">Agente incaricato:</span> Ines Cabral</p>
-                            <p><span class="highlight">Data:</span> 1 novembre 2025</p>
-                            <p>Seleziona un fascicolo per visualizzare la trascrizione dell'interrogatorio.</p>
-                        </div>
-
-                        <div class="interrogation-folders">
-                            <div class="interrogation-folder" data-person="ezequiel">Ezequiel Torres</div>
-                            <div class="interrogation-folder" data-person="luca">Luca Piantagrane</div>
-                            <div class="interrogation-folder" data-person="gordon">Gordon Chico Cayada</div>
-                            <div class="interrogation-folder" data-person="lucia">Suor Lucia D'Hombres</div>
-                            <div class="interrogation-folder" data-person="xamiel">Padre Xamiel</div>
-                        </div>
-
-                        <div id="interrogation-content" class="interrogation-content">
-                        </div>
-
-                        <div class="media-section">
-                            <h3>Materiale Fotografico</h3>
-                            <div class="media-content">
-                                <img id="fotoEttore" src="CCTV/sitopolizia.png" alt="Foto stanza" style="width:70%; max-width:400px; display:block; margin:0 auto 15px; border-radius:4px; cursor: zoom-in;">
-                                <p style="text-align:center; color:#ccc;">Scatto all'interno della stanza di Ettore nel Monastero di San Andro Pertiños.</p>
-                                <img id="fotoEttore3" src="biglietto.png" alt="Biglietto" style="width:70%; max-width:400px; display:block; margin:20px auto 15px; border-radius:4px; cursor: zoom-in;">
-                                <p style="text-align:center; color:#ccc;">Bigliettino trovato sul tavolo nella stanza di Ettore.</p>                                                                                                                                                                                                                                                                                                                                                                                  
-                                <img id="fotoEttore2" src="referto.jpeg" alt="Referto" style="width:70%; max-width:400px; display:block; margin:20px auto 15px; border-radius:4px; cursor: zoom-in;">
-                                <p style="text-align:center; color:#ccc;">Referto Ettore Scala.</p>
-
+                            <div class="report-section">
+                                <h3>ARCHIVIO INTERROGATORI - CASO Ettore Scala</h3>
+                                <p><span class="highlight">Agente incaricato:</span> Ines Cabral</p>
+                                <p><span class="highlight">Data:</span> 1 novembre 2025</p>
+                                <p>Seleziona un fascicolo per visualizzare la trascrizione dell'interrogatorio.</p>
                             </div>
-                        </div>
+
+                            <div class="interrogation-folders">
+                                <div class="interrogation-folder" data-person="ezequiel">Ezequiel Torres</div>
+                                <div class="interrogation-folder" data-person="luca">Luca Piantagrane</div>
+                                <div class="interrogation-folder" data-person="gordon">Gordon Chico Cayada</div>
+                                <div class="interrogation-folder" data-person="lucia">Suor Lucia D'Hombres</div>
+                                <div class="interrogation-folder" data-person="xamiel">Padre Xamiel</div>
+                            </div>
+
+                            <div id="interrogation-content" class="interrogation-content"></div>
+
+                            <div class="media-section">
+                                <h3>Materiale Fotografico</h3>
+                                <div class="media-content">
+                                    <img id="fotoEttore" src="CCTV/sitopolizia.png" alt="Foto stanza" style="width:70%; max-width:400px; display:block; margin:0 auto 15px; border-radius:4px; cursor: zoom-in;">
+                                    <p style="text-align:center; color:#ccc;">Scatto all'interno della stanza di Ettore nel Monastero di San Andro Pertiños.</p>
+                                    <img id="fotoEttore3" src="biglietto.png" alt="Biglietto" style="width:70%; max-width:400px; display:block; margin:20px auto 15px; border-radius:4px; cursor: zoom-in;">
+                                    <p style="text-align:center; color:#ccc;">Bigliettino trovato sul tavolo nella stanza di Ettore.</p>                                                                                                                                                                                                                                                                                                                                                                                  
+                                    <img id="fotoEttore2" src="referto.jpeg" alt="Referto" style="width:70%; max-width:400px; display:block; margin:20px auto 15px; border-radius:4px; cursor: zoom-in;">
+                                    <p style="text-align:center; color:#ccc;">Referto Ettore Scala.</p>
+                                </div>
+                            </div>
                         `;
 
-                        // Trascrizioni interrogatori (copiate dal tuo codice)
                         const interrogations = {
                             luca: `
                                 <h3>Interrogatorio - Luca Piantagrane</h3>
@@ -1448,7 +1362,6 @@
                             `
                         };
 
-                        // Gestisci click sui fascicoli
                         const folders = document.querySelectorAll('.interrogation-folder');
                         const contentDiv = document.getElementById('interrogation-content');
 
@@ -1458,7 +1371,7 @@
                                 contentDiv.innerHTML = interrogations[person] || "<p>Nessuna trascrizione disponibile.</p>";
                             });
                         });
-                        
+
                         const fotoEttore = document.getElementById("fotoEttore");
                         if (fotoEttore) {
                             fotoEttore.addEventListener("click", function() {
@@ -1470,7 +1383,7 @@
                             fotoEttore2.addEventListener("click", function() {
                                 openImageModal("referto.jpeg", "Referto Ettore Scala");
                             });
-                        } 
+                        }
                         const fotoEttore3 = document.getElementById("fotoEttore3");
                         if (fotoEttore3) {
                             fotoEttore3.addEventListener("click", function() {
@@ -1478,195 +1391,7 @@
                             });
                         }
                     }
-                } else if (searchTerm === 'ettore scala') {
-                    if (!isStep2Unlocked()) {
-                        searchResults.innerHTML = `
-                        <h2>Risultati della ricerca: "ettore scala"</h2>
 
-                        <div class="report-section">
-                            <h3>ARCHIVIO - CASO Ettore Scala</h3>
-                            <p><span class="highlight">Agente incaricato:</span> Ines Cabral</p>
-                            <p><span class="highlight">Data:</span> 1 novembre 2025</p>
-                        </div>
-
-                        <div class="media-section">
-                            <h3>Materiale Fotografico</h3>
-                            <div class="media-content">
-                                <img id="fotoEttore" src="CCTV/sitopolizia.png" alt="Foto stanza" style="width:70%; max-width:400px; display:block; margin:0 auto 15px; border-radius:4px; cursor: zoom-in;">
-                                <p style="text-align:center; color:#ccc;">Scatto all'interno della stanza di Ettore nel Monastero di San Andro Pertiños.</p>
-                                <img id="fotoEttore3" src="biglietto.png" alt="Biglietto" style="width:70%; max-width:400px; display:block; margin:20px auto 15px; border-radius:4px; cursor: zoom-in;">
-                                <p style="text-align:center; color:#ccc;">Bigliettino trovato sul tavolo nella stanza di Ettore.</p>
-                            </div>
-                        </div>
-                        `;
-
-                        const fotoEttore = document.getElementById("fotoEttore");
-                        if (fotoEttore) {
-                            fotoEttore.addEventListener("click", function() {
-                                openImageModal("CCTV/sitopolizia.png", "Stanza di Ettore nel monastero");
-                            });
-                        } 
-                        const fotoEttore3 = document.getElementById("fotoEttore3");
-                        if (fotoEttore3) {
-                            fotoEttore3.addEventListener("click", function() {
-                                openImageModal("biglietto.png", "Bigliettino trovato sul tavolo nella stanza di Ettore");
-                            });
-                        }
-
-                    // STEP 2: dopo 45 minuti → versione completa con interrogatori + referto
-                    } else {
-                        searchResults.innerHTML = `
-                        <h2>Risultati della ricerca: "ettore scala"</h2>
-
-                        <div class="report-section">
-                            <h3>ARCHIVIO INTERROGATORI - CASO Ettore Scala</h3>
-                            <p><span class="highlight">Agente incaricato:</span> Ines Cabral</p>
-                            <p><span class="highlight">Data:</span> 1 novembre 2025</p>
-                            <p>Seleziona un fascicolo per visualizzare la trascrizione dell'interrogatorio.</p>
-                        </div>
-
-                        <div class="interrogation-folders">
-                            <div class="interrogation-folder" data-person="ezequiel">Ezequiel Torres</div>
-                            <div class="interrogation-folder" data-person="luca">Luca Piantagrane</div>
-                            <div class="interrogation-folder" data-person="gordon">Gordon Chico Cayada</div>
-                            <div class="interrogation-folder" data-person="lucia">Suor Lucia D'Hombres</div>
-                            <div class="interrogation-folder" data-person="xamiel">Padre Xamiel</div>
-                        </div>
-
-                        <div id="interrogation-content" class="interrogation-content">
-                        </div>
-
-                        <div class="media-section">
-                            <h3>Materiale Fotografico</h3>
-                            <div class="media-content">
-                                <img id="fotoEttore" src="CCTV/sitopolizia.png" alt="Foto stanza" style="width:70%; max-width:400px; display:block; margin:0 auto 15px; border-radius:4px; cursor: zoom-in;">
-                                <p style="text-align:center; color:#ccc;">Scatto all'interno della stanza di Ettore nel Monastero di San Andro Pertiños.</p>
-                                <img id="fotoEttore3" src="biglietto.png" alt="Biglietto" style="width:70%; max-width:400px; display:block; margin:20px auto 15px; border-radius:4px; cursor: zoom-in;">
-                                <p style="text-align:center; color:#ccc;">Bigliettino trovato sul tavolo nella stanza di Ettore.</p>                                                                                                                                                                                                                                                                                                                                                                                  
-                                <img id="fotoEttore2" src="referto.jpeg" alt="Referto" style="width:70%; max-width:400px; display:block; margin:20px auto 15px; border-radius:4px; cursor: zoom-in;">
-                                <p style="text-align:center; color:#ccc;">Referto Ettore Scala.</p>
-
-                            </div>
-                        </div>
-                        `;
-
-                        // Trascrizioni interrogatori (copiate dal tuo codice)
-                        const interrogations = {
-                            luca: `
-                                <h3>Interrogatorio - Luca Piantagrane</h3>
-                                <p><span class="highlight">Registrazione 22:44 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
-                                <p><strong>Ispettore:</strong> Nome e cognome?</p>
-                                <p><strong>Luca:</strong> Luca Piantagrane.</p>
-                                <p><strong>Ispettore:</strong> Può dirmi che rapporto aveva con Ettore Scala?</p>
-                                <p><strong>Luca:</strong> Lo conoscevo da anni. Eravamo soci, amici… finchè non ha deciso di mollare tutto. Avevamo un progetto grosso assieme. Poi lui se n’è andato, così, da un giorno all’altro, per diventare prete.</p>
-                                <p><strong>Ispettore:</strong> Come l’ha presa?</p>
-                                <p><strong>Luca:</strong> Come vuole che l’abbia presa? Io ci avevo messo tutto, soldi, tempo, contatti. E lui mi ha rovinato. Ma non ero qui per questo, se è quello che pensa.</p>
-                                <p><strong>Ispettore:</strong> Allora perché ha accettato l’invito alla cena?</p>
-                                <p><strong>Luca:</strong> Per curiosità, forse per orgoglio. Aveva detto che voleva chiudere i conti con il passato, chiedere perdono. Beh, magari parte di me voleva sentirlo dire di persona.</p>
-                                <p><strong>Ispettore:</strong> Si direbbe scosso.</p>
-                                <p><strong>Luca:</strong> Sì, lo sono. Non lo odiavo, se è questo che vuole sapere. Era un idiota pieno di rimorsi, non un nemico… Però, glielo dico sinceramente, non piango per lui. Ha sempre pensato di poter scappare dalle sue responsabilità. Adesso… beh, non ci riuscirà più.</p>
-                                <p><strong>Ispettore:</strong> Le sue dichiarazioni sono sospette, cosa vuole lasciare intendere?</p>
-                                <p><strong>Luca:</strong> Cosa voglio lasciare intendere?! Ma per carità, non scherziamo… Ho studiato farmacia, è chiaro che ha avuto un malore, che cosa c'entro io? Non avete nulla contro di me, lasciatemi andare!</p>
-                                <p><strong>Ispettore:</strong> In realtà nella sua stanza abbiamo trovato una scatola piena di Carotiñobur, farmaco che potrebbe essere legato alla morte di Ettore. Una boccetta era mancante. Sa dirci qualcosa a riguardo?</p>
-                                <p><strong>Luca:</strong> Si, vorrei denunciare un furto. Quel farmaco è la mia ultima scoperta, l’avevo portato qui, forse ingenuamente, per convincere Ettore a tornare a lavorare assieme. Dovete credermi, è miracoloso, poteva essere l’occasione di tirare su i bilanci. Ma qualcuno è entrato nella mia stanza e l’ha rubato. Non capisco come sia possibile, mi hanno assicurato che sono l’unico ad avere una copia delle chiavi della stanza degli ospiti oltre a Padre Xamiel.</p>
-                            `,
-                            gordon: `
-                                <h3>Interrogatorio - Gordon Chico Cayada</h3>
-                                <p><span class="highlight">Registrazione 22:56 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
-                                <p><strong>Ispettore:</strong> Nome e cognome?</p>
-                                <p><strong>Gordon:</strong> Gordon Cayada.</p>
-                                <p><strong>Ispettore:</strong> Da quanto conosceva Ettore Scala?</p>
-                                <p><strong>Gordon:</strong> Dal 2012. Allora era uno studente italiano in Erasmus. Eravamo molto amici, al tempo…</p>
-                                <p><strong>Ispettore:</strong> Siete rimasti in contatto da allora?</p>
-                                <p><strong>Gordon:</strong> Non esattamente. C’è stato un episodio, una notte, quella in cui mia sorella è sparita. Lui è stato uno degli ultimi ad averla vista viva. Ha sempre negato un coinvolgimento, ma sono sicuro che almeno una parte della colpa ce l’avesse. Da allora non abbiamo più la stessa amicizia, la stessa vita di prima.</p>
-                                <p><strong>Ispettore:</strong> Quindi lo odiava.</p>
-                                <p><strong>Gordon:</strong> Sì. Per anni ammetto di averlo odiato, gli ho anche mandato una lettera in cui gli ho detto tutto ciò che pensavo di lui. Poi però… ho smesso. La rabbia non serve a niente. Quando mi ha invitato a questa cena, pensavo volesse chiedermi scusa, e alla fine ho accettato. Volevo capire se fosse davvero cambiato.</p>
-                                <p><strong>Ispettore:</strong> Come si sente adesso?</p>
-                                <p><strong>Gordon:</strong> Non lo so. Vuoto. È morto l’unico che poteva dirmi la verità su mia sorella. E la cosa peggiore è che… una parte di me pensava che questa sera fosse l’occasione per chiudere tutto. Per fare pace. Ma sembra che con Ettore le cose finiscano sempre nel modo sbagliato.</p>
-                            `,
-                            ezequiel: `
-                                <h3>Interrogatorio - Ezequiel Torres</h3>
-                                <p><span class="highlight">Registrazione 22:34 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
-                                <p><strong>Ispettore:</strong> Nome e cognome, per favore.</p>
-                                <p><strong>E. Torres:</strong> Ezequiel Torres, signore.</p>
-                                <p><strong>Ispettore:</strong> Conosceva la vittima?</p>
-                                <p><strong>E. Torres:</strong> Sì, sì, il seminarista… Ettore. Lo conoscevo. Parlava sempre con tutti, ma pure troppo. Io gli dicevo sempre: “Meglio non ficcare il naso dove non serve”. A molte persone qui gli impiccioni non piacciono.</p>
-                                <p><strong>Ispettore:</strong> Come mai era presente alla cena?</p>
-                                <p><strong>E. Torres:</strong> Ettore era così, aveva un cuore grande. Aveva invitato tutte le persone che passavano dal monastero, per tanto o per poco tempo. Mi aveva chiesto di aiutarlo ad aprire i tavoli, ed è buffo perchè ci siamo conosciuti proprio così, perchè lui mi aveva chiesto aiuto per una qualche questione in giardino che ormai non ricordo neanche più.</p>
-                                <p><strong>Ispettore:</strong> Qualcuno è entrato nella stanza di Ettore questa sera. Lei è il custode, aveva accesso a tutte le stanze? Ha notato un mazzo di chiavi sparire di recente?</p>
-                                <p><strong>E. Torres:</strong> Ho un mazzo di chiavi, sì, ma non ho accesso alle stanze private, quelle le tengono i padri. Io apro solo dove serve, e richiudo sempre. Non voglio guai.</p>
-                                <p><strong>Ispettore:</strong> Secondo lei, chi avrebbe potuto volere la morte di Ettore?</p>
-                                <p><strong>E. Torres:</strong> Ma quindi siete sicuri che è stato ammazzato? Pensavo a un infarto, con tutti i pensieri che aveva per la testa quel ragazzo. Non lo so, ma chi è stato sicuro è un uomo che ne capisce di medicina se è riuscito a farlo sembrare così naturale.</p>
-                                <p><strong>Ispettore:</strong> Ha qualcosa da aggiungere?</p>
-                                <p><strong>E. Torres:</strong> Solo questo: state attenti, voi della polizia. Qui la notte non è come fuori. Ci sono persone che tengono molto ai propri segreti… e certe porte, una volta aperte, non si richiudono più.</p>
-                            `,
-                            lucia: `
-                                <h3>Interrogatorio - Suor Lucia D'Hombres</h3>
-                                <p><span class="highlight">Registrazione 23:07 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
-                                <p><strong>Ispettore:</strong> Nome e cognome, per favore.</p>
-                                <p><strong>Suor Lucia:</strong> Chi io?</p>
-                                <p><strong>Ispettore:</strong> Si, nome e cognome.</p>
-                                <p><strong>Suor Lucia:</strong> Lucia D’Hombres.</p>
-                                <p><strong>Ispettore:</strong> Da quanto tempo vive nel monastero?</p>
-                                <p><strong>Suor Lucia:</strong> Tempo? Passa così lento. Isabel era appena andata via. Ninna nanna ninna oh questa bimba a chi la do?</p>
-                                <p><strong>Ispettore:</strong> Conosceva bene Ettore Scala?</p>
-                                <p><strong>Suor Lucia:</strong> In Biblioteca? (fissa il vuoto) Ha riportato gli ultimi libri?</p>
-                                <p><strong>Ispettore:</strong> Dov’era durante la cena?</p>
-                                <p><strong>Suor Lucia:</strong> Padre Xamiel non mi ha ancora dato le caramelle gialle. Volete un muffin?</p>
-                                <p><strong>Ispettore:</strong> Guardi la questione è seria – Ha visto qualcosa di insolito?</p>
-                                <p><strong>Suor Lucia:</strong> (fa una pausa lunga) C’era… una ragazza. In fondo al corridoio. Con i piedi scalzi. Nessuno la guardava, ma lei mi ha sorriso. Mi ha detto: “Non dire nulla, mamma, non ancora.”</p>
-                                <p><strong>Ispettore:</strong> Signora, le telecamere non hanno registrato nessun movimento insolito, non c’era nessuno nel monastero.</p>
-                                <p><strong>Suor Lucia:</strong> Il Signore perdona anche i silenzi?</p>
-                            `,
-                            xamiel: `
-                                <h3>Interrogatorio - Padre Xamiel</h3>
-                                <p><span class="highlight">Registrazione 23:22 – Sala colloqui, Monastero di San Andro Pertiños</span></p>
-                                <p><strong>Ispettore:</strong> Nome e cognome?</p>
-                                <p><strong>Padre Xamiel:</strong> Padre Xamiel Ortega. Rettore del Monastero di San Andro Pertiños.</p>
-                                <p><strong>Ispettore:</strong> Lei era il superiore di Ettore Scala?</p>
-                                <p><strong>Padre Xamiel:</strong> Sì. Era sotto la mia guida spirituale. Un giovane brillante, promettente. La sua prematura scomparsa è davvero una tragedia.</p>
-                                <p><strong>Ispettore:</strong> Lei dov’era al momento della morte?</p>
-                                <p><strong>Padre Xamiel:</strong> A capotavola, naturalmente. Ero ospite e padrone di casa. Ho visto Ettore alzarsi per fare una chiamata. Poi è caduto. È stato un tragico malore, nient’altro.</p>
-                                <p><strong>Ispettore:</strong> Non ritiene che ci siano elementi sospetti?</p>
-                                <p><strong>Padre Xamiel:</strong> Ritengo che ci sia già abbastanza scandalo senza bisogno di aggiungerne altro. Il monastero è un luogo sacro, non un circo mediatico. Vi invito a trattare l’accaduto con la dovuta discrezione.</p>
-                                <p><strong>Ispettore:</strong> Quindi ci chiede di non indagare?</p>
-                                <p><strong>Padre Xamiel:</strong> Non rigirate le mie parole. Vi chiedo di rispettare i confini. In passato siete stati abbastanza bravi ad abbandonare le indagini, non credo sarà difficile farlo anche stavolta. Non c’è nulla da scoprire. Le vostre domande rischiano di macchiare irreversibilmente l'immagine di questo monastero.</p>
-                                <p><strong>Ispettore:</strong> Ha qualcosa da aggiungere?</p>
-                                <p><strong>Padre Xamiel:</strong> Sì. Vi consiglio di concludere presto le vostre indagini. La nostra istituzione è già abbastanza detestata. Alcune verità non servono a nessuno, soprattutto se a pagarne il prezzo è la fede del popolo.</p>
-                            `
-                        };
-
-                        // Gestisci click sui fascicoli
-                        const folders = document.querySelectorAll('.interrogation-folder');
-                        const contentDiv = document.getElementById('interrogation-content');
-
-                        folders.forEach(folder => {
-                            folder.addEventListener('click', function() {
-                                const person = this.dataset.person;
-                                contentDiv.innerHTML = interrogations[person] || "<p>Nessuna trascrizione disponibile.</p>";
-                            });
-                        });
-                        
-                        const fotoEttore = document.getElementById("fotoEttore");
-                        if (fotoEttore) {
-                            fotoEttore.addEventListener("click", function() {
-                                openImageModal("CCTV/sitopolizia.png", "Stanza di Ettore nel monastero");
-                            });
-                        }
-                        const fotoEttore2 = document.getElementById("fotoEttore2");
-                        if (fotoEttore2) {
-                            fotoEttore2.addEventListener("click", function() {
-                                openImageModal("referto.jpeg", "Referto Ettore Scala");
-                            });
-                        } 
-                        const fotoEttore3 = document.getElementById("fotoEttore3");
-                        if (fotoEttore3) {
-                            fotoEttore3.addEventListener("click", function() {
-                                openImageModal("biglietto.png", "Bigliettino trovato sul tavolo nella stanza di Ettore");
-                            });
-                        }
-                    }
-                    
                 } else if (searchTerm !== '') {
                     searchResults.innerHTML = `
                         <h2>Risultati della ricerca: "${searchTerm}"</h2>
@@ -1678,9 +1403,11 @@
                 }
             });
 
-            // Funzione per generare le cartelle degli anni
+            /* =========================================
+               TELECAMERE
+            ========================================== */
             function generateYearFolders() {
-                // Anni disponibili (escludendo 2010, 2015, 2018, 2019, 2022)
+                yearFolders.innerHTML = '';
                 const availableYears = [2009, 2012, 2015, 2018, 2021, 2024];
                 
                 availableYears.forEach(year => {
@@ -1688,9 +1415,7 @@
                     folder.className = 'year-folder';
                     folder.dataset.year = year;
                     
-                    folder.innerHTML = `
-                        <h4>${year}</h4>
-                    `;
+                    folder.innerHTML = `<h4>${year}</h4>`;
                     
                     folder.addEventListener('click', function() {
                         showMonthFolders(year);
@@ -1700,36 +1425,26 @@
                 });
             }
             
-            // Funzione per mostrare le cartelle dei mesi per un anno specifico
             function showMonthFolders(year) {
-                // Nascondi le cartelle degli anni
                 yearFolders.style.display = 'none';
-                
-                // Mostra le cartelle dei mesi
                 monthFolders.style.display = 'grid';
-                
-                // Pulisci le cartelle dei mesi esistenti
                 monthFolders.innerHTML = '';
-                
-                // Aggiungi il pulsante per tornare indietro
+
                 const backButton = document.createElement('button');
                 backButton.className = 'back-button';
                 backButton.textContent = '← Torna agli anni';
                 backButton.addEventListener('click', goBackToYears);
                 monthFolders.appendChild(backButton);
                 
-                // Aggiungi titolo
                 const title = document.createElement('h3');
                 title.textContent = `Seleziona un mese - Anno ${year}`;
                 monthFolders.appendChild(title);
                 
-                // Mesi dell'anno
                 const months = [
                     'Febbraio', 'Marzo', 'Maggio', 'Luglio',
                      'Agosto', 'Ottobre', 'Novembre'
                 ];
                 
-                // Crea le cartelle per ogni mese
                 months.forEach((month, index) => {
                     const monthFolder = document.createElement('div');
                     monthFolder.className = 'month-folder';
@@ -1748,7 +1463,6 @@
                 });
             }
             
-            // Funzione per mostrare le immagini delle telecamere per un mese specifico
             function showCameraImages(year, month, monthNumber) {
                 monthFolders.style.display = 'none';
                 cameraImages.style.display = 'block';
@@ -1778,7 +1492,6 @@
                     `;
                     imagesGrid.appendChild(camDiv);
 
-                // Aggiungi evento click per zoom
                     const imgElement = camDiv.querySelector('img');
                     imgElement.addEventListener('click', function() {
                         openImageModal(item.image, item.text);
@@ -1786,6 +1499,9 @@
                 });
             }
 
+            /* =========================================
+               MODALE IMMAGINI
+            ========================================== */
             function openImageModal(src, caption) {
                 const modal = document.getElementById("imageModal");
                 const modalImg = document.getElementById("modalImg");
@@ -1800,7 +1516,6 @@
                 document.getElementById("imageModal").style.display = "none";
             });
 
-            // Chiudi il modal cliccando fuori dall’immagine
             window.addEventListener("click", function(e) {
                 const modal = document.getElementById("imageModal");
                 if (e.target === modal) {
@@ -1808,20 +1523,20 @@
                 }
             });
 
-            // Funzione per tornare alle cartelle degli anni
             function goBackToYears() {
                 monthFolders.style.display = 'none';
                 cameraImages.style.display = 'none';
-                    yearFolders.style.display = 'grid';
+                yearFolders.style.display = 'grid';
             }
             
-            // Funzione per tornare alle cartelle dei mesi
             window.goBackToMonths = function() {
                 cameraImages.style.display = 'none';
                 monthFolders.style.display = 'grid';
             };
             
-            // Aggiungi stili per l'animazione shake
+            /* =========================================
+               ANIMAZIONE SHAKE LOGIN
+            ========================================== */
             const style = document.createElement('style');
             style.textContent = `
                 @keyframes shake {
@@ -1834,6 +1549,7 @@
                 }
             `;
             document.head.appendChild(style);
+
         });
     </script>
 </body>
