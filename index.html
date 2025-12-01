@@ -566,6 +566,26 @@
                 return parseInt(t);
             }
 
+            const RESET_AFTER_HOURS = 24;
+            const RESET_AFTER_MS = RESET_AFTER_HOURS * 60 * 60 * 1000;
+
+            function autoResetAfter24h() {
+                const start = localStorage.getItem('police_game_start');
+                if (!start) return;
+
+                const elapsed = Date.now() - parseInt(start);
+
+                if (elapsed >= RESET_AFTER_MS) {
+                    // reset del timer automatico
+                    localStorage.setItem('police_game_start', Date.now().toString());
+
+                    // reset degli sblocchi eventuali
+                    unlockedTriggered = false;
+
+                    console.log("⟳ Reset automatico dopo 24 ore.");
+                }
+            }
+
             function isStep2Unlocked() {
                 return (Date.now() - ensureGameStartTime()) >= STEP2_DELAY_MS;
             }
@@ -614,6 +634,7 @@
                     seconds.toString().padStart(2, "0");
             }
 
+            autoResetAfter24h();
             updateCountdown();
             setInterval(updateCountdown, 1000);
 
