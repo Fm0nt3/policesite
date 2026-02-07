@@ -562,6 +562,12 @@
                 return t ? parseInt(t) : null; // Ritorna null se il gioco non è ancora iniziato
             }
 
+            function isStep2Unlocked() {
+                const start = getGameStartTime();
+                if (!start) return false;
+                return (Date.now() - start) >= STEP2_DELAY_MS;
+            }
+
             const RESET_AFTER_HOURS = 24;
             const RESET_AFTER_MS = RESET_AFTER_HOURS * 60 * 60 * 1000;
 
@@ -569,21 +575,11 @@
                 const start = localStorage.getItem('police_game_start');
                 if (!start) return;
 
-                const elapsed = Date.now() - parseInt(start);
-
+                const elapsed = Date.now() - start;
                 if (elapsed >= RESET_AFTER_MS) {
-                    // reset del timer automatico
-                    localStorage.setItem('police_game_start', Date.now().toString());
-
-                    // reset degli sblocchi eventuali
-                    unlockedTriggered = false;
-
-                    console.log("⟳ Reset automatico dopo 24 ore.");
+                    localStorage.removeItem('police_game_start');
+                    location.reload(); 
                 }
-            }
-
-            function isStep2Unlocked() {
-                return (Date.now() - ensureGameStartTime()) >= STEP2_DELAY_MS;
             }
 
             let unlockedTriggered = false;
@@ -602,21 +598,21 @@
                 if (timerBox) {
                     timerBox.style.opacity = "0.5";
                 }
-
-                const inputValue = document.getElementById("searchInput")?.value.trim().toLowerCase();
-                if (inputValue === "ettore" || inputValue === "ettore scala") {
-                    document.getElementById("searchBtn").click();
-                }
             }
 
             function updateCountdown() {
                 const start = getGameStartTime();
-                if (!start) return; // Se il login non è stato fatto, esci dalla funzione
+                const timerBox = document.getElementById("countdownTimer");
+                if (!timerBox) return;
+
+                // Se il timer non è ancora partito (nessun login effettuato)
+                if (!start) {
+                    timerBox.textContent = "--:--";
+                    return;
+                }
 
                 const now = Date.now();
                 const remaining = STEP2_DELAY_MS - (now - start);
-                const timerBox = document.getElementById("countdownTimer");
-                if (!timerBox) return;
 
                 if (remaining <= 0) {
                     timerBox.textContent = "00:00";
@@ -631,10 +627,6 @@
                     minutes.toString().padStart(2, "0") + ":" +
                     seconds.toString().padStart(2, "0");
             }
-
-            autoResetAfter24h();
-            updateCountdown();
-            setInterval(updateCountdown, 1000);
 
             /* =========================================
                RIFERIMENTI DOM
@@ -802,29 +794,33 @@
             };
 
             /* =========================================
-               AUTO-SKIP LOGIN SE GIA' SBLOCCATO
+                LOGICA DI AVVIO
             ========================================== */
-            if (isStep2Unlocked()) {
+    
+            // Controlla se l'utente era già loggato precedentemente
+            const existingStart = getGameStartTime();
+            if (existingStart) {
+                // Se c'è un tempo salvato, salta il login e avvia il countdown
                 loginPage.style.display = 'none';
                 mainPage.style.display = 'block';
                 generateYearFolders();
+                setInterval(updateCountdown, 1000);
+            } else {
+                // Altrimenti mostra il login
+                loginPage.style.display = 'block';
+                mainPage.style.display = 'none';
             }
 
+            autoResetAfter24h();
+            updateCountdown();
+
             /* =========================================
-               LOGIN
+                LOGIN
             ========================================== */
             let attempts = 0;
             loginBtn.addEventListener('click', function() {
                 const username = document.getElementById('username').value;
                 const password = document.getElementById('password').value;
-
-                // Se nel frattempo si è sbloccato, niente login
-                if (isStep2Unlocked()) {
-                    loginPage.style.display = 'none';
-                    mainPage.style.display = 'block';
-                    generateYearFolders();
-                    return;
-                }
 
                 if (username === 'Ines Cabral' && password === 'santiago2021') {
                     // Fai partire il timer solo ORA
