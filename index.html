@@ -557,13 +557,9 @@
             const STEP2_DELAY_MINUTES = 45;
             const STEP2_DELAY_MS = STEP2_DELAY_MINUTES * 60 * 1000;
 
-            function ensureGameStartTime() {
+            function getGameStartTime() {
                 let t = localStorage.getItem('police_game_start');
-                if (!t) {
-                    t = Date.now().toString();
-                    localStorage.setItem('police_game_start', t);
-                }
-                return parseInt(t);
+                return t ? parseInt(t) : null; // Ritorna null se il gioco non è ancora iniziato
             }
 
             const RESET_AFTER_HOURS = 24;
@@ -614,7 +610,9 @@
             }
 
             function updateCountdown() {
-                const start = ensureGameStartTime();
+                const start = getGameStartTime();
+                if (!start) return; // Se il login non è stato fatto, esci dalla funzione
+
                 const now = Date.now();
                 const remaining = STEP2_DELAY_MS - (now - start);
                 const timerBox = document.getElementById("countdownTimer");
@@ -829,9 +827,18 @@
                 }
 
                 if (username === 'Ines Cabral' && password === 'santiago2021') {
+                    // Fai partire il timer solo ORA
+                    if (!localStorage.getItem('police_game_start')) {
+                        localStorage.setItem('police_game_start', Date.now().toString());
+                    }
+    
                     loginPage.style.display = 'none';
                     mainPage.style.display = 'block';
                     generateYearFolders();
+    
+                    // Avvia il ciclo del countdown
+                    updateCountdown(); 
+                    setInterval(updateCountdown, 1000);
                 } else {
                     attempts++;
                     errorMsg.style.display = 'block';
