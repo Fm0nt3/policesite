@@ -138,6 +138,10 @@
             border-radius: 4px 0 0 4px;
             color: #f0f0f0;
         }
+
+        .hint-underline {
+            text-decoration: underline;
+        }
         
         .search-box button {
             width: auto;
@@ -854,14 +858,14 @@
                         hint.style.color = '#aaa';
                         hint.style.textAlign = 'center';
                         hint.style.marginTop = '10px';
-                        hint.textContent = 'Consiglio di sistema: a volte la chiave è nel cammino.';
+                        hint.textContent = 'Consiglio di sistema: a volte la chiave è nel <span class="hint-underline">cammino</span>.';
                         loginPage.querySelector('.login-container').appendChild(hint);
                     } else if (attempts === 6) {
                         const hint = document.createElement('p');
                         hint.style.color = '#aaa';
                         hint.style.textAlign = 'center';
                         hint.style.marginTop = '10px';
-                        hint.textContent = 'Consiglio di sistema: formato nome+anno.';
+                        hint.textContent = 'Consiglio di sistema: formato <span class="hint-underline">nome</span>+<span class="hint-underline">anno</span>.';
                         loginPage.querySelector('.login-container').appendChild(hint);
                     }
                     
