@@ -185,19 +185,11 @@
             color: #888;
         }
         
-        .police-badge {
-            display: inline-block;
-            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
-            border: 2px solid #d32f2f;
-            border-radius: 50%;
-            width: 80px;
-            height: 80px;
-            line-height: 80px;
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 12px;
-            color: #d32f2f;
-            font-weight: bold;
+        .police-logo {
+            display: block;
+            margin: 0 auto 20px auto; /* Centra l'immagine e stacca dal titolo */
+            max-width: 120px;          /* Imposta la larghezza massima desiderata */
+            height: auto;             /* Mantiene le proporzioni originali dell'immagine */
         }
         
         .timestamp {
@@ -487,7 +479,7 @@
 <body>
     <div class="container">
         <header>
-            <div class="police-badge">POLIZIA</div>
+            <img src="polizia1.PNG" alt="Logo Polizia" class="police-logo">
             <h1>INVESTIGAZIONE CRIMINE</h1>
             <h2>Accesso Riservato</h2>
         </header>
